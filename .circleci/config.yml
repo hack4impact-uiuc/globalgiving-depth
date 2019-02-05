@@ -23,6 +23,7 @@ jobs:
             cd src
             pip install -r requirements.txt --user
             pip install -r requirements-dev.txt --user
+            echo "black linting:"
             /home/circleci/.local/bin/black . --check
 workflows:
   version: 2
