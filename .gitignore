@@ -1,0 +1,16 @@
+# Please don't commit secrets to GitHub!
+
+# VSCode files
+.vscode/
+
+# Pycache and MISC
+**/__pycache__/
+*.pyc
+*.secret
+
+# Mac Files
+**/.DS_Store
+
+# ENV Variables
+.env
+.jwt
