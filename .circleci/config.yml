@@ -4,7 +4,7 @@ version: 2
 jobs:
   # microservice_test:
   #   docker:
-  #     - image: circleci/python:3.7
+  #     - image: circleci/python:3.7.0-browsers
   #   steps:
   #     - checkout
   #     - run:
@@ -15,7 +15,7 @@ jobs:
   #           /home/circleci/.local/bin/pytest
   lint:
     docker:
-      - image: circleci/python:3.7
+      - image: circleci/python:3.7.0-browsers
     steps:
       - checkout
       - run:
