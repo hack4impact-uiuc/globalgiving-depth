@@ -71,10 +71,11 @@ def parse_project_info(project):
     # Unlabeled data to return
     name = get_project_key(project, ["organization", "name"])
     url = get_project_key(project, ["organization", "url"])
-    themes = get_project_key(project, ["organization", "themes", "theme"])
+    main_theme = get_project_key(project, ["themeName"])
+    sub_themes = get_project_key(project, ["organization", "themes", "theme"])
     country = get_project_key(project, ["country"])
     
-    return {"name": name, "url": url, "themes": themes, "country": country}
+    return {"name": name, "url": url, "mainTheme": main_theme, "subThemes": sub_themes, "country": country}
 
 if __name__ == "__main__":
     main()
