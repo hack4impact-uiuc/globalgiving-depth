@@ -7,45 +7,49 @@ def main():
     headers = {"Accept": "application/json"}
 
     # JSON files to write to
-    labeled_results_json = open("labeled_results.json", "a")
+    projects_json = open("projects.json", "a")
 
     # Initial setup
     next_project_id = 2
     has_next = True
-    labeled_results = []
+    projects = []
+    error_count = 0
 
-    try:
-        while has_next:
-            # Requesting projects from Global Giving API
+    while has_next:
+        # Requesting projects from Global Giving API
+        try:
             r = requests.get(
                 "https://api.globalgiving.org/api/public/projectservice/all/projects/"
-                + "?api_key=72ef6e29-cb2b-4613-9cc6-69a88a8d3f3b&nextProjectId="
+                + "?api_key=72ef6e29-cb2b-4613-9cc6-69a88a8d3f3b&next_project_id="
                 + str(next_project_id),
                 headers=headers,
             )
 
             projects = r.json()["projects"]
+        
+        except:
+            error_count += 1
+            if error_count >= 3:
+                next_project_id += 1
+                error_count = 0
+            continue
 
-            # Grabbing next projects
-            has_next = projects["hasNext"]
-            if has_next:
-                next_project_id = projects["nextProjectId"]
+        # Grabbing next projects
+        has_next = projects["hasNext"]
+        if has_next:
+            next_project_id = projects["nextProjectId"]
 
-            # Recording projects
-            labeled_results += [
-                parse_project_info(project) for project in projects["project"]
-            ]
+        # Recording projects
+        projects += [
+            parse_project_info(project) for project in projects["project"]
+        ]
 
-            time.sleep(0.5)
-
-    except Exception as e:
-        print(e)
-        print("nextProjectId = " + str(next_project_id))
+        time.sleep(0.5)
 
     # Writing projects to JSON file
     json.dump(
-        {"projects": labeled_results},
-        labeled_results_json,
+        {"projects": projects},
+        projects_json,
         sort_keys=True,
         indent=2,
         ensure_ascii=False,
