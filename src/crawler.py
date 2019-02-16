@@ -6,11 +6,14 @@ from dotenv import load_dotenv
 
 
 def main():
-    load_dotenv()
+    """ Retrieves and parses information from Global Giving's API
+        and writes it to a json file """
 
+    # loads global giving api key
+    load_dotenv()
     global_giving_key = os.getenv("GLOBAL_GIVING_KEY")
 
-    # Specifies API to return JSON
+    # Specifying API to return JSON
     headers = {"Accept": "application/json"}
 
     # JSON files to write to
@@ -71,9 +74,15 @@ def main():
 
 
 def get_project_key(project, keys):
-    """
-    Helper method to find project properties
+    """ Helper method to find project properties
     Finds properties in given keys, if not, returns ''
+
+    Args: 
+        project: projects json returned by Global Giving's API
+        keys: keys to iterate through project to find desired value
+
+    Return:
+        Object found in project key(s)
     """
     result = project
     for key in keys:
@@ -83,9 +92,15 @@ def get_project_key(project, keys):
     return ""
 
 
-# Helper method to parse projects and filter relevant data
 def parse_project_info(project):
-    # data to return
+    """ Helper method to parse projects and filter relevant data 
+
+    Args:
+        project: projects json returned by Global Giving's API
+
+    Return: 
+        Dictionary of filtered parameters from project json
+    """
     name = get_project_key(project, ["organization", "name"])
     url = get_project_key(project, ["organization", "url"])
     main_theme = get_project_key(project, ["themeName"])
