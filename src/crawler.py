@@ -33,8 +33,8 @@ def parseProjectInfo(project, label):
 headers = {'Accept': 'application/json'}
 
 # JSON files to write to
-labeled_results_json = open('labeled_results.json', 'a')
-unlabeled_results_json = open('unlabeled_results.json', 'a')
+labeled_results_json = open('labeled_results.json', 'w')
+unlabeled_results_json = open('unlabeled_results.json', 'w')
 
 # Initial setup
 nextProjectId = 2
