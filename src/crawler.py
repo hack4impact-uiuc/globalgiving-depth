@@ -10,18 +10,18 @@ def main():
     projects_json = open("projects.json", "a")
 
     # Initial setup
-    nextProjectId = 2
-    hasNext = True
+    next_project_id = 2
+    has_next = True
     projects = []
     error_count = 0
 
-    while hasNext:
+    while has_next:
         # Requesting projects from Global Giving API
         try:
             r = requests.get(
                 "https://api.globalgiving.org/api/public/projectservice/all/projects/"
-                + "?api_key=72ef6e29-cb2b-4613-9cc6-69a88a8d3f3b&nextProjectId="
-                + str(nextProjectId),
+                + "?api_key=72ef6e29-cb2b-4613-9cc6-69a88a8d3f3b&next_project_id="
+                + str(next_project_id),
                 headers=headers,
             )
 
@@ -30,18 +30,18 @@ def main():
         except:
             error_count += 1
             if error_count >= 3:
-                nextProjectId += 1
+                next_project_id += 1
                 error_count = 0
             continue
 
         # Grabbing next projects
-        hasNext = projects["hasNext"]
-        if hasNext:
-            nextProjectId = projects["nextProjectId"]
+        has_next = projects["hasNext"]
+        if has_next:
+            next_project_id = projects["nextProjectId"]
 
         # Recording projects
         projects += [
-            parseProjectInfo(project, label=True) for project in projects["project"]
+            parse_project_info(project) for project in projects["project"]
         ]
 
         time.sleep(0.5)
@@ -56,7 +56,7 @@ def main():
     )
 
 
-def getProjectKey(project, keys):
+def get_project_key(project, keys):
     """
     Helper method to find project properties
     Finds properties in given keys, if not, returns ''
@@ -64,19 +64,20 @@ def getProjectKey(project, keys):
     try:
         result = project
         for key in keys:
-            result = result[key]  # .get
+            result = results.get(key)
         return result
     except:
         return ""
 
 
 # Helper method to parse projects and filter relevant data
-def parseProjectInfo(project, label):
+def parse_project_info(project):
     # Unlabeled data to return
-    name = getProjectKey(project, ["organization", "name"])
-    url = getProjectKey(project, ["organization", "url"])
-    country = getProjectKey(project, ["country"])
-    themes = getProjectKey(project, ["organization", "themes", "theme"])
+    name = get_project_key(project, ["organization", "name"])
+    url = get_project_key(project, ["organization", "url"])
+    country = get_project_key(project, ["country"])
+    themes = get_project_key(project, ["organization", "themes", "theme"])
+
     return {"name": name, "url": url, "themes": themes, "country": country}
 
 if __name__ == "__main__":
