@@ -27,9 +27,9 @@ def main():
             projects = r.json()["projects"]
 
             # Grabbing next projects
-            hasNext = projects["hasNext"]
-            if hasNext:
-                nextProjectId = projects["nextProjectId"]
+            has_next = projects["hasNext"]
+            if has_next:
+                next_project_id = projects["nextProjectId"]
 
             # Recording projects
             labeled_results += [
@@ -40,7 +40,7 @@ def main():
 
     except Exception as e:
         print(e)
-        print("nextProjectId = " + str(nextProjectId))
+        print("nextProjectId = " + str(next_project_id))
 
     # Writing projects to JSON file
     json.dump(
