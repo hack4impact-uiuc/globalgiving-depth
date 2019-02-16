@@ -3,11 +3,13 @@ import json
 import time
 
 def main():
-    # Specifies API to return JSON
+    """ Retrieves and parses information from Global Giving's API
+        and writes it to a json file """
+    # Specifying API to return JSON
     headers = {"Accept": "application/json"}
 
     # JSON files to write to
-    projects_json = open("projects.json", "a")
+    projects_json = open("projects.json", "w")
 
     # Initial setup
     next_project_id = 2
@@ -57,9 +59,15 @@ def main():
 
 
 def get_project_key(project, keys):
-    """
-    Helper method to find project properties
+    """ Helper method to find project properties
     Finds properties in given keys, if not, returns ''
+
+    Args: 
+        project: projects json returned by Global Giving's API
+        keys: keys to iterate through project to find desired value
+
+    Return:
+        Object found in project key(s)
     """
     try:
         result = project
@@ -70,9 +78,15 @@ def get_project_key(project, keys):
         return ""
 
 
-# Helper method to parse projects and filter relevant data
 def parse_project_info(project):
-    # Unlabeled data to return
+    """ Helper method to parse projects and filter relevant data 
+
+    Args:
+        project: projects json returned by Global Giving's API
+
+    Return: 
+        Dictionary of filtered parameters from project json
+    """
     name = get_project_key(project, ["organization", "name"])
     url = get_project_key(project, ["organization", "url"])
     main_theme = get_project_key(project, ["themeName"])
