@@ -58,7 +58,7 @@ while hasNext:
     labeled_results += [parseProjectInfo(project, label=True) for project in projects['project']]
     unlabeled_results += [parseProjectInfo(project, label=False) for project in projects['project']]
 
-    time.sleep(5)
+    time.sleep(30)
 
 # Writing projects to JSON file
 json.dump({'projects': unlabeled_results}, unlabeled_results_json, sort_keys= True, indent = 2, ensure_ascii = False)
