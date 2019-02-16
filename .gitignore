@@ -19,3 +19,6 @@
 Pipfile
 Pipfile.lock
 
+# Produced json files
+.projects.json.swp
+projects.json
