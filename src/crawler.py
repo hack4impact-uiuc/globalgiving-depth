@@ -2,43 +2,51 @@ import requests
 import json
 import time
 
-# Filters essential information from project
-def project_info(project):
-    name = ''
-    url = ''
-    themes = ''
-    country = ''
-    try:
-        name = project['organization']['name']
+# Helper method to find project properties
+def getProjectKey(project, keys):
+    # Finds properties in given keys, if not, returns ''
+    try: 
+        result = project
+        for key in keys:
+            result = result[key]
+        return result
     except:
-        pass
-    try:
-        url = project['organization']['url']
-    except:
-        pass
-    try:
-        themes = project['organization']['themes']["theme"]
-    except:
-        pass
-    try:
-        country = project['country']
-    except:
-        pass
-    return {'name': name, 'URL': url, 'themes': themes, 'country': country}
+        return ''
+
+
+# Helper method to parse projects and filter relevant data
+def parseProjectInfo(project, label):
+    # Unlabeled data to return
+    name = getProjectKey(project, ['organization', 'name'])
+    url = getProjectKey(project, ['organization', 'url'])
+    country = getProjectKey(project, ['country'])
+
+    # Labeled data to return if wanted
+    if label:
+        themes = getProjectKey(project, ['organization', 'themes', 'theme'])
+        return {'name': name, 'url': url, 'themes': themes, 'country': country}
+
+    return {'name': name, 'url': url, 'country': country}
+
+
+# Specifies API to return JSON
+headers = {'Accept': 'application/json'}
+
+# JSON files to write to
+labeled_results_json = open('labeled_results.json', 'a')
+unlabeled_results_json = open('unlabeled_results.json', 'a')
 
 # Initial setup
-headers = {'Accept': 'application/json'} # returns data from api in json format
 nextProjectId = 2
 hasNext = True
-file = open("projects.json", "w")
-results = []
+labeled_results = []
+unlabeled_results = []
 
-# Grabbing data from api and writing it to a file
-for i in range(2):
-    # Getting projects from global giving api
+while hasNext:
+    # Requesting projects from Global Giving API
     r = requests.get("https://api.globalgiving.org/api/public/projectservice/all/projects/" + 
-                    "?api_key=72ef6e29-cb2b-4613-9cc6-69a88a8d3f3b&nextProjectId=" + str(nextProjectId), 
-                    headers=headers)
+                     "?api_key=72ef6e29-cb2b-4613-9cc6-69a88a8d3f3b&nextProjectId=" + str(nextProjectId), 
+                     headers=headers)
     projects = r.json()['projects']
 
     # Grabbing next projects
@@ -46,11 +54,12 @@ for i in range(2):
     if hasNext:
         nextProjectId = projects['nextProjectId']
 
-    # Storing filtered projects into list
-    results += [project_info(project) for project in projects['project']]
-        
-    # TODO: time.sleep(60)
+    # Recording projects
+    labeled_results += [parseProjectInfo(project, label=True) for project in projects['project']]
+    unlabeled_results += [parseProjectInfo(project, label=False) for project in projects['project']]
+
     time.sleep(5)
 
-# Writing json to outfile
-json.dump({'projects' : results}, file, sort_keys = True, indent = 4, ensure_ascii = False)
+# Writing projects to JSON file
+json.dump({'projects': unlabeled_results}, unlabeled_results_json, sort_keys= True, indent = 2, ensure_ascii = False)
+json.dump({'projects': labeled_results}, labeled_results_json, sort_keys=True, indent = 2, ensure_ascii = False)
