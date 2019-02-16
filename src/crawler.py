@@ -14,7 +14,6 @@ def project_info(project, label):
     url = ''
     country = ''
 
-
     # can it be cleaned up???
     try:
         name = project['organization']['name']
@@ -53,13 +52,16 @@ while hasNext:
                      headers=headers)
 
     projects = r.json()['projects']
+
+    # Grabbing next projects
     hasNext = projects['hasNext']
     if hasNext:
         nextProjectId = projects['nextProjectId']
+
     labeled_results += [project_info(project, label=True) for project in projects['project']]
     unlabeled_results += [project_info(project, label=False) for project in projects['project']]
 
-    time.sleep(30)
+    time.sleep(5)
 
 json.dump({'projects': unlabeled_results}, unlabeled_results_json, sort_keys= True, indent = 2, ensure_ascii = False)
 json.dump({'projects': labeled_results}, labeled_results_json, sort_keys=True, indent = 2, ensure_ascii = False)
