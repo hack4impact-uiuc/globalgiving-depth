@@ -60,7 +60,6 @@ def main():
         projects_list += [
             parse_project_info(project) for project in projects["project"]
         ]
-        break
         time.sleep(0.5)
 
     # Writing projects to JSON file
