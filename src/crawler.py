@@ -2,11 +2,20 @@ import requests
 import json
 import time
 
-def project_info(project):
+# Parsing each project for relevant data
+def project_info(project, label):
+    if label:
+        themes = ''
+        try:
+            themes = project['organization']['themes']['theme']
+        except:
+            pass
     name = ''
     url = ''
-    themes = ''
     country = ''
+
+
+    # can it be cleaned up???
     try:
         name = project['organization']['name']
     except:
@@ -16,24 +25,29 @@ def project_info(project):
     except:
         pass
     try:
-        themes = project['themes']
-    except:
-        pass
-    try:
         country = project['country']
     except:
         pass
-    return {'project': {'Name': name, 'URL': url, 'Themes': themes, 'Country': country}}
+    if label:
+        return {'name': name, 'url': url, 'themes': themes, 'country': country}
+    return {'name': name, 'url': url, 'country': country}
 
-
-
+# JSON instead of XML
 headers = {'Accept': 'application/json'}
 
-test_json = open('test.json', 'w')
+# JSON files to write to
+labeled_results_json = open('labeled_results.json', 'w')
+unlabeled_results_json = open('unlabeled_results.json', 'w')
 
+
+# Starting project iteration
 nextProjectId = 2
 hasNext = True
+labeled_results = []
+unlabeled_results = []
+
 while hasNext:
+    # request and parsing each project in the request
     r = requests.get("https://api.globalgiving.org/api/public/projectservice/all/projects/" + 
                      "?api_key=72ef6e29-cb2b-4613-9cc6-69a88a8d3f3b&nextProjectId=" + str(nextProjectId), 
                      headers=headers)
@@ -42,11 +56,10 @@ while hasNext:
     hasNext = projects['hasNext']
     if hasNext:
         nextProjectId = projects['nextProjectId']
-    # print(json.dumps(projects, indent=4))
-    for project in projects['project']:
-        json.dump(project_info(project), test_json, sort_keys= True, indent = 2, ensure_ascii= False)
-        # json.dump(project, test_json, sort_keys= True, indent = 2, ensure_ascii= False)
+    labeled_results += [project_info(project, label=True) for project in projects['project']]
+    unlabeled_results += [project_info(project, label=False) for project in projects['project']]
 
+    time.sleep(30)
 
-    # TODO: time.sleep(60)
-    time.sleep(5)
+json.dump({'projects': unlabeled_results}, unlabeled_results_json, sort_keys= True, indent = 2, ensure_ascii = False)
+json.dump({'projects': labeled_results}, labeled_results_json, sort_keys=True, indent = 2, ensure_ascii = False)
