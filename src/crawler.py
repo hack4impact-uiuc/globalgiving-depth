@@ -54,8 +54,3 @@ for i in range(2):
 
 # Writing json to outfile
 json.dump({'projects' : results}, file, sort_keys = True, indent = 4, ensure_ascii = False)
-
-# Method to open json and access projects for future use
-'''with open("projects.json", "r") as json_file:
-    projects = json.load(json_file)
-    print(projects[15]['id'])'''
