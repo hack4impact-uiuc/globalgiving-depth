@@ -7,7 +7,7 @@ def main():
     headers = {"Accept": "application/json"}
 
     # JSON files to write to
-    projects_json = open("projects.json", "a")
+    projects_json = open("projects.json", "w")
 
     # Initial setup
     next_project_id = 2
