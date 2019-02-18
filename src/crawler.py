@@ -58,6 +58,9 @@ def main():
         ]
         time.sleep(0.5)
 
+    # Removing duplicate organizations
+    projects_list = removeDuplicateOrganizations(projects_list)
+
     # Writing projects to JSON file
     json.dump(
         {"projects": projects_list},
@@ -109,6 +112,26 @@ def parse_project_info(project):
         "subThemes": sub_themes,
         "country": country,
     }
+
+def removeDuplicateOrganizations(projects):
+    ''' super rough method to remove duplicates pls no judge '''
+    # Initializing set and list and size trackers
+    organizations = {'empty'}
+    organizations.remove('empty')
+    cleaned_projects = []
+    initSize = 0
+    afterSize = 0
+
+
+    for project in projects:
+        initSize = len(organizations)
+        organizations.add(project["name"])
+        afterSize = len(organizations)
+
+        if (initSize < afterSize):
+            cleaned_projects.append(project)
+
+    return cleaned_projects
 
 
 if __name__ == "__main__":
