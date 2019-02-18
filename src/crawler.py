@@ -25,7 +25,8 @@ def main():
     projects_list = []
     error_count = 0
 
-    while has_next:
+    # 30000 is so the loop doesn't run forever if we get a 400 because there are around 25000 projects
+    while has_next and next_project_id < 30000:
         # Requesting projects from Global Giving API
         try:
             r = requests.get(
@@ -37,19 +38,14 @@ def main():
                 headers=headers,
             )
             projects = r.json()["projects"]
-            # json.dump(
-            #     projects["project"],
-            #     projects_json,
-            #     sort_keys=True,
-            #     indent=2,
-            #     ensure_ascii=False,
-            # )
-        except:
+#            print(next_project_id)
+        except Exception as e:
+            print(r.status_code)
             error_count += 1
             if error_count >= 3:
                 next_project_id += 1
                 error_count = 0
-            continue
+            break
 
         # Grabbing next projects
         has_next = projects["hasNext"]
