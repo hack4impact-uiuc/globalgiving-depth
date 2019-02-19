@@ -52,19 +52,19 @@ def text_scraper(url):
     return text
 
 def get_other_links(soup, url):
-    links = []
+    links = set()
 
     tags = soup.findAll("a", attrs={"target": "_self"})
     for tag in tags:
         link = url + "/" + tag.get("href")
         if link not in links:
-            links.append(link)
+            links.add(link)
 
     tags = soup.findAll("a", attrs={"href": re.compile(url)})
     for tag in tags:
         link = tag.get("href")
         if link not in links:
-            links.append(tag.get("href"))
+            links.add(tag.get("href"))
 
     return links
 
