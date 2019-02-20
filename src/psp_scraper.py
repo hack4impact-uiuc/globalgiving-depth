@@ -74,7 +74,7 @@ def get_other_links(soup, url):
         sub_url = tag.get("href")
         if re.match(regex, sub_url):
             if sub_url not in links:
-                links.append(sub_url)
+                links.add(sub_url)
         else:
             if tag.get("target") == "_self":
                 if sub_url.startswith("/"):
@@ -83,13 +83,13 @@ def get_other_links(soup, url):
                         url = url[:-1]
                     link = url + "/" + sub_url
                     if link not in links:
-                        links.append(link)
+                        links.add(link)
                 else:
                     if url.endswith("/"):
                         url = url[:-1]
                     link = url + "/" + sub_url
                     if link not in links:
-                        links.append(link)
+                        links.add(link)
             elif tag.get("data-target") == "#":
                 if sub_url.startswith("/"):
                     sub_url = sub_url[1:]
@@ -97,13 +97,13 @@ def get_other_links(soup, url):
                         url = url[:-1]
                     link = url + "/" + sub_url
                     if link not in links:
-                        links.append(link)
+                        links.add(link)
                 else:
                     if url.endswith("/"):
                         url = url[:-1]
                     link = url + "/" + sub_url
                     if link not in links:
-                        links.append(link)
+                        links.add(link)
 
     return links
 
