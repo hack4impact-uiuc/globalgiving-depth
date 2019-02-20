@@ -25,32 +25,38 @@ def main():
     projects_list = []
     error_count = 0
 
-    while has_next:
+    # 30000 is so the loop doesn't run forever if we get a 400 because there are around 25000 projects
+    while has_next and next_project_id < 30000:
         # Requesting projects from Global Giving API
         try:
             r = requests.get(
                 "https://api.globalgiving.org/api/public/projectservice/all/projects/"
                 + "?api_key="
                 + str(global_giving_key)
-                + "&next_project_id="
+                + "&nextProjectId="
                 + str(next_project_id),
                 headers=headers,
             )
-            projects = r.json()["projects"]
-            # json.dump(
-            #     projects["project"],
-            #     projects_json,
-            #     sort_keys=True,
-            #     indent=2,
-            #     ensure_ascii=False,
-            # )
-        except:
+            projects = r.json().get("projects")
+            print(next_project_id)
+        except Exception as e:
+            print(e)
+            print(r.status_code)
             error_count += 1
             if error_count >= 3:
                 next_project_id += 1
                 error_count = 0
-            continue
-
+            break
+        if r.status_code != 200:
+            print(r.status_code)
+            error_count += 1
+            if error_count >= 3:
+                next_project_id += 1
+                error_count = 0
+            break
+        if projects is None:
+            print("no projects" + str(next_project_id))
+            break
         # Grabbing next projects
         has_next = projects["hasNext"]
         if has_next:
@@ -61,6 +67,9 @@ def main():
             parse_project_info(project) for project in projects["project"]
         ]
         time.sleep(0.5)
+
+    # Removing duplicate organizations
+    projects_list = remove_duplicate_organizations(projects_list)
 
     # Writing projects to JSON file
     json.dump(
@@ -113,6 +122,26 @@ def parse_project_info(project):
         "subThemes": sub_themes,
         "country": country,
     }
+
+def remove_duplicate_organizations(projects):
+    ''' super rough method to remove duplicates pls no judge '''
+    # Initializing set and list and size trackers
+    organizations = {'empty'}
+    organizations.remove('empty')
+    cleaned_projects = []
+    initSize = 0
+    afterSize = 0
+
+
+    for project in projects:
+        initSize = len(organizations)
+        organizations.add(project["name"])
+        afterSize = len(organizations)
+
+        if (initSize < afterSize):
+            cleaned_projects.append(project)
+
+    return cleaned_projects
 
 
 if __name__ == "__main__":
