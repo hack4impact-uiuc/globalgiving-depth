@@ -123,22 +123,22 @@ def parse_project_info(project):
         "country": country,
     }
 
+
 def remove_duplicate_organizations(projects):
-    ''' super rough method to remove duplicates pls no judge '''
+    """ super rough method to remove duplicates pls no judge """
     # Initializing set and list and size trackers
-    organizations = {'empty'}
-    organizations.remove('empty')
+    organizations = {"empty"}
+    organizations.remove("empty")
     cleaned_projects = []
     initSize = 0
     afterSize = 0
-
 
     for project in projects:
         initSize = len(organizations)
         organizations.add(project["name"])
         afterSize = len(organizations)
 
-        if (initSize < afterSize):
+        if initSize < afterSize:
             cleaned_projects.append(project)
 
     return cleaned_projects
