@@ -7,26 +7,32 @@ from bs4 import BeautifulSoup
 from bs4.element import Comment
 import re
 
+
 def main():
     with open(sys.argv[1], "r") as input_file:
         input_data = json.load(input_file)
 
     url_list = []
-    for project in input_data['projects']:
-         if len(project["url"]) != 0:
-             url_list.append(project["url"])
+    for project in input_data["projects"]:
+        if len(project["url"]) != 0:
+            url_list.append(project["url"])
 
-    scraping_data = []
+    scraping_data = {}
+    scraping_data["projects"] = []
     for url in url_list:
-        scraping_data.append(text_scraper(url))
-    scraping_data = ''.join(scraping_data)
+        project = {}
+        project["url"] = url
+        project["text"] = text_scraper(url)
+        scraping_data["projects"].append(project)
 
-    with open("scraping_data.txt", "w") as output_file:
+    with open("scraping_data.json", "w") as output_file:
+        # parsed = json.load(scraping_data)
         json.dump(scraping_data, output_file)
 
     input_file.close()
     output_file.close()
     return
+
 
 """
 text_scraper can be used as a blackbox with a given url.
@@ -34,39 +40,73 @@ It will RETURN a string with text parsed from:
 1) The original site
 2) Associated links
 """
+
+
 def text_scraper(url):
-    assert(type(url) == str)
-    html_doc = requests.get(url).text
+    assert type(url) == str
+    try:
+        request = requests.get(url)
+    except requests.exceptions.ConnectionError as e:
+        print(e)
+        return ""
+
+    html_doc = request.text
     soup = BeautifulSoup(html_doc, "html.parser")
     other_links = get_other_links(soup, url)
-
     # Get all text from url and subpages
     text = soup.findAll(text=True)
-    text = ''.join(filter_text(text))
+    text = " ".join(filter_text(text))
     for link in other_links:
         child_html_doc = requests.get(link).text
         child_soup = BeautifulSoup(child_html_doc, "html.parser")
         child_text = child_soup.findAll(text=True)
-        child_text = ''.join(filter_text(child_text))
+        child_text = " ".join(filter_text(child_text))
         text += child_text
     return text
+
 
 def get_other_links(soup, url):
     links = []
 
-    tags = soup.findAll("a", attrs={"target": "_self"})
+    tags = soup.findAll(href=True)
+    regex = re.compile("^" + url)
     for tag in tags:
-        link = url + "/" + tag.get("href")
-        if link not in links:
-            links.append(link)
-
-    tags = soup.findAll("a", attrs={"href": re.compile(url)})
-    for tag in tags:
-        link = tag.get("href")
-        if link not in links:
-            links.append(tag.get("href"))
+        sub_url = tag.get("href")
+        if re.match(regex, sub_url):
+            if sub_url not in links:
+                links.append(sub_url)
+        else:
+            if tag.get("target") == "_self":
+                if sub_url.startswith("/"):
+                    sub_url = sub_url[1:]
+                    if url.endswith("/"):
+                        url = url[:-1]
+                    link = url + "/" + sub_url
+                    if link not in links:
+                        links.append(link)
+                else:
+                    if url.endswith("/"):
+                        url = url[:-1]
+                    link = url + "/" + sub_url
+                    if link not in links:
+                        links.append(link)
+            elif tag.get("data-target") == "#":
+                if sub_url.startswith("/"):
+                    sub_url = sub_url[1:]
+                    if url.endswith("/"):
+                        url = url[:-1]
+                    link = url + "/" + sub_url
+                    if link not in links:
+                        links.append(link)
+                else:
+                    if url.endswith("/"):
+                        url = url[:-1]
+                    link = url + "/" + sub_url
+                    if link not in links:
+                        links.append(link)
 
     return links
+
 
 def filter_text(texts):
     filtered_text = []
@@ -81,6 +121,7 @@ def filter_text(texts):
             if len(stripped_text) != 0:
                 filtered_text.append(stripped_text)
     return filtered_text
+
 
 if __name__ == "__main__":
     main()
