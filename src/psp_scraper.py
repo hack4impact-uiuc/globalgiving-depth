@@ -76,34 +76,18 @@ def get_other_links(soup, url):
             if sub_url not in links:
                 links.add(sub_url)
         else:
-            if tag.get("target") == "_self":
+            if tag.get("target") == "_self" or tag.get("data-target") == "#":
                 if sub_url.startswith("/"):
                     sub_url = sub_url[1:]
                     if url.endswith("/"):
                         url = url[:-1]
                     link = url + "/" + sub_url
-                    if link not in links:
-                        links.add(link)
+                    links.add(link)
                 else:
                     if url.endswith("/"):
                         url = url[:-1]
                     link = url + "/" + sub_url
-                    if link not in links:
-                        links.add(link)
-            elif tag.get("data-target") == "#":
-                if sub_url.startswith("/"):
-                    sub_url = sub_url[1:]
-                    if url.endswith("/"):
-                        url = url[:-1]
-                    link = url + "/" + sub_url
-                    if link not in links:
-                        links.add(link)
-                else:
-                    if url.endswith("/"):
-                        url = url[:-1]
-                    link = url + "/" + sub_url
-                    if link not in links:
-                        links.add(link)
+                    links.add(link)
 
     return links
 
