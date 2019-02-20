@@ -13,11 +13,12 @@ def main():
 
     url_list = []
     for project in input_data["projects"]:
-        if len(project["url"]) != 0:
+        if project["url"]:
             url_list.append(project["url"])
 
     scraping_data = {}
     scraping_data["projects"] = []
+
     for url in url_list:
         project = {}
         project["url"] = url
@@ -30,14 +31,13 @@ def main():
     return
 
 
-def text_scraper(url):
+def text_scraper(url: str) -> str:
     """
     text_scraper can be used as a blackbox with a given url.
     It will RETURN a string with text parsed from:
     1) The original site
     2) Associated links
     """
-    assert type(url) == str
     try:
         request = requests.get(url)
     except requests.exceptions.ConnectionError as e:
@@ -55,6 +55,7 @@ def text_scraper(url):
         child_soup = BeautifulSoup(child_html_doc, "html.parser")
         child_text = child_soup.findAll(text=True)
         child_text = " ".join(filter_text(child_text))
+        text += " "
         text += child_text
     return text
 
