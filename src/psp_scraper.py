@@ -25,7 +25,7 @@ def main():
         project["text"] = text_scraper(url)
         scraping_data["projects"].append(project)
 
-    with open("scraping_data.json", "w") as output_file:
+    with open(sys.argv[2], "w") as output_file:
         json.dump(scraping_data, output_file)
 
     input_file.close()
@@ -60,14 +60,18 @@ def text_scraper(url):
         child_soup = BeautifulSoup(child_html_doc, "html.parser")
         child_text = child_soup.findAll(text=True)
         child_text = " ".join(filter_text(child_text))
-        text += child_text
+        text += " " + child_text
+
+    text = text.encode("ascii", "ignore").decode("utf-8")
     return text
 
 
 def get_other_links(soup, url):
     links = set()
 
-    tags = soup.findAll(href=True)
+    body = soup.find('body')
+    body_contents = body.findChildren()[0]
+    tags = body_contents.findAll(href=True)
     regex = re.compile("^" + url)
     for tag in tags:
         sub_url = tag.get("href")
@@ -103,7 +107,6 @@ def get_other_links(soup, url):
                     link = url + "/" + sub_url
                     if link not in links:
                         links.add(link)
-
     return links
 
 
