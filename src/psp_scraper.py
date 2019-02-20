@@ -97,7 +97,7 @@ def filter_text(texts):
             "meta",
         }:
             stripped_text = text.strip()
-            if len(stripped_text) != 0:
+            if stripped_text:
                 filtered_text.append(stripped_text)
     return filtered_text
 
