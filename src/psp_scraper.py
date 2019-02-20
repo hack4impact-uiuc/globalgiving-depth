@@ -26,7 +26,6 @@ def main():
         scraping_data["projects"].append(project)
 
     with open("scraping_data.json", "w") as output_file:
-        # parsed = json.load(scraping_data)
         json.dump(scraping_data, output_file)
 
     input_file.close()
