@@ -66,7 +66,7 @@ def text_scraper(url):
 
 
 def get_other_links(soup, url):
-    links = []
+    links = set()
 
     tags = soup.findAll(href=True)
     regex = re.compile("^" + url)
