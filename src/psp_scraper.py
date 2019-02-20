@@ -1,11 +1,10 @@
 import sys
-
-import requests
-import json
+import re
 import multiprocessing as mp
+import json
+import requests
 from bs4 import BeautifulSoup
 from bs4.element import Comment
-import re
 
 
 def main():
@@ -28,21 +27,16 @@ def main():
     with open("scraping_data.json", "w") as output_file:
         # parsed = json.load(scraping_data)
         json.dump(scraping_data, output_file)
-
-    input_file.close()
-    output_file.close()
     return
 
 
-"""
-text_scraper can be used as a blackbox with a given url.
-It will RETURN a string with text parsed from:
-1) The original site
-2) Associated links
-"""
-
-
 def text_scraper(url):
+    """
+    text_scraper can be used as a blackbox with a given url.
+    It will RETURN a string with text parsed from:
+    1) The original site
+    2) Associated links
+    """
     assert type(url) == str
     try:
         request = requests.get(url)
@@ -95,12 +89,12 @@ def get_other_links(soup, url):
 def filter_text(texts):
     filtered_text = []
     for text in texts:
-        if not isinstance(text, Comment) and text.parent.name not in [
+        if not isinstance(text, Comment) and text.parent.name not in {
             "style",
             "script",
             "head",
             "meta",
-        ]:
+        }:
             stripped_text = text.strip()
             if len(stripped_text) != 0:
                 filtered_text.append(stripped_text)
