@@ -1,0 +1,394 @@
+{
+  "organizations": {
+    "hasNext": true,
+    "nextOrgId": 12,
+    "organization": [
+      {
+        "activeProjects": 0,
+        "addressLine1": "#119, St 360",
+        "addressLine2": "",
+        "bridgeId": 3009665801,
+        "city": "Phnom Penh",
+        "countries": {
+          "country": [
+            {
+              "iso3166CountryCode": "KH",
+              "name": "Cambodia"
+            }
+          ]
+        },
+        "country": "Cambodia",
+        "id": 2,
+        "iso3166CountryCode": "KH",
+        "logoUrl": "https://www.globalgiving.org/pfil/organ/2/orglogo.gif",
+        "mission": "DDD has a duel mission\r\n-To establish a sustainable IT outsourcing business that can reinvest its profit in order to benefit more people and connect disadvantaged (physically disabled, trafficked, orphaned, and displaced) individuals to the global economy\r\n-To provide the hope, income, education, training, and confidence building required to allow our employees to realize better futures for their families and themselves",
+        "name": "Digital Divide Data",
+        "postal": "Prey I",
+        "state": "Toul Svey",
+        "themes": {
+          "theme": [
+            {
+              "id": "ecdev",
+              "name": "Economic Development"
+            }
+          ]
+        },
+        "totalProjects": 1,
+        "url": "http://www.digitaldividedata.com"
+      },
+      {
+        "activeProjects": 0,
+        "addressLine1": "56/60 Kampala Rd P.O. Box 28771",
+        "addressLine2": "",
+        "bridgeId": 6212192025,
+        "city": "Kampala",
+        "countries": {
+          "country": [
+            {
+              "iso3166CountryCode": "UG",
+              "name": "Uganda"
+            }
+          ]
+        },
+        "country": "Uganda",
+        "id": 3,
+        "iso3166CountryCode": "UG",
+        "logoUrl": "https://www.globalgiving.org/pfil/organ/3/orglogo.gif",
+        "mission": "Our goal is to supply computer technology and the Internet to the most underserved on the planet;  To address the need for information and computer knowledge that is being demanded all over Africa, through the re-use of some of the twenty million obsolete computers that the United States disposes each year, and provide training seminars to thousands of school-age children yearning for this knowledge.",
+        "name": "Global Stewardship Foundation Africa",
+        "postal": "",
+        "state": "",
+        "themes": {
+          "theme": [
+            {
+              "id": "ecdev",
+              "name": "Economic Development"
+            }
+          ]
+        },
+        "totalProjects": 1,
+        "url": "http://www.Gsfa.us"
+      },
+      {
+        "activeProjects": 0,
+        "addressLine1": "3720 du Parc, #300",
+        "addressLine2": "",
+        "bridgeId": 5567305610,
+        "city": "Montreal",
+        "countries": {
+          "country": [
+            {
+              "iso3166CountryCode": "CD",
+              "name": "Congo, Democratic Republic of the"
+            }
+          ]
+        },
+        "country": "Canada",
+        "id": 4,
+        "iso3166CountryCode": "CA",
+        "mission": "Alternatives defines its mission as follows: to work in solidarity with NGOs and grassroots organisations in defending the interests of the majority and building a more humane, democratic and ecologically - sound society a the local, national and international levels. A strong civil society, based on grassroots associations, is a central condition for sustainable development.",
+        "name": "Alternatives (Canada)",
+        "postal": "H2X 2J1",
+        "state": "Quebec",
+        "themes": {
+          "theme": [
+            {
+              "id": "ecdev",
+              "name": "Economic Development"
+            }
+          ]
+        },
+        "totalProjects": 1,
+        "url": "http://alternatives.ca"
+      },
+      {
+        "activeProjects": 0,
+        "addressLine1": "3 Clark Road",
+        "addressLine2": "",
+        "bridgeId": 2628608370,
+        "city": "Millis",
+        "countries": {
+          "country": [
+            {
+              "iso3166CountryCode": "SV",
+              "name": "El Salvador"
+            },
+            {
+              "iso3166CountryCode": "VN",
+              "name": "Vietnam"
+            }
+          ]
+        },
+        "country": "United States",
+        "ein": "04-3534486",
+        "id": 5,
+        "iso3166CountryCode": "US",
+        "logoUrl": "https://www.globalgiving.org/pfil/organ/5/orglogo.gif",
+        "mission": "Global Village Engineers is a corps of volunteer civil and environmental engineers who work with rural communities and non governmental organizations in the developing world. Communities often have the greatest stake in the success of engineered infrastructure and are also fully responsible for maintaining it. GVE empowers through education and training to demystify infrastructure and environmental issues in order for marginalized communities to become effective advocates on their own behalf.",
+        "name": "Global Village Engineers",
+        "postal": "02054-1213",
+        "state": "Massachusetts",
+        "themes": {
+          "theme": [
+            {
+              "id": "ecdev",
+              "name": "Economic Development"
+            },
+            {
+              "id": "health",
+              "name": "Health"
+            }
+          ]
+        },
+        "totalProjects": 3,
+        "url": "http://www.gvengineers.org"
+      },
+      {
+        "activeProjects": 0,
+        "addressLine1": "2139 NW 79th Ave #0535",
+        "addressLine2": "",
+        "bridgeId": 7635488109,
+        "city": "Miami",
+        "countries": {
+          "country": [
+            {
+              "iso3166CountryCode": "HN",
+              "name": "Honduras"
+            }
+          ]
+        },
+        "country": "United States",
+        "id": 6,
+        "iso3166CountryCode": "US",
+        "logoUrl": "https://www.globalgiving.org/pfil/organ/6/orglogo.gif",
+        "mission": "Our mission is to improve the standard of living of the poorest of the poor women in rural Honduras. We do this by providing small loans for women to start and grow micro enterprises. We also aim to become financially self sustainable as soon as it is possible and responsible to do so. Furthermore, we would like to become a leader in the field of rural micro credit, acting as a model program to encourage other organizations throughout Latin America and the world to provide credit to the poor.",
+        "name": "The Adelante Foundation of Honduras",
+        "postal": "33122-1615",
+        "state": "Florida",
+        "themes": {
+          "theme": [
+            {
+              "id": "ecdev",
+              "name": "Economic Development"
+            }
+          ]
+        },
+        "totalProjects": 1,
+        "url": "http://www.adelantefoundation.org"
+      },
+      {
+        "activeProjects": 0,
+        "addressLine1": "950 Airport Rd., Se # 102",
+        "addressLine2": "",
+        "bridgeId": 5571208475,
+        "city": "Albany",
+        "countries": {
+          "country": [
+            {
+              "iso3166CountryCode": "CM",
+              "name": "Cameroon"
+            }
+          ]
+        },
+        "country": "United States",
+        "ein": "93-1290101",
+        "id": 7,
+        "iso3166CountryCode": "US",
+        "logoUrl": "https://www.globalgiving.org/pfil/organ/7/orglogo.gif",
+        "mission": "To improve living and learning conditions of students in rural Cameroon. In addition, to promote peace, cross-cultural understanding, love and unity of all people.",
+        "name": "Educare-Africa",
+        "postal": "97322",
+        "state": "Oregon",
+        "themes": {
+          "theme": [
+            {
+              "id": "edu",
+              "name": "Education"
+            }
+          ]
+        },
+        "totalProjects": 1,
+        "url": "http://www.orrpcv.peak.org/educare_africa.html"
+      },
+      {
+        "activeProjects": 0,
+        "addressLine1": "157 S. Lexington Ave",
+        "addressLine2": "Suite B-1",
+        "bridgeId": 3803719408,
+        "city": "Asheville",
+        "countries": {
+          "country": [
+            {
+              "iso3166CountryCode": "MW",
+              "name": "Malawi"
+            }
+          ]
+        },
+        "country": "United States",
+        "ein": "56-2219139",
+        "id": 8,
+        "iso3166CountryCode": "US",
+        "mission": "World Camp develops simple solutions for the complex problems of poverty and disease. World Camp take a localized approach, working with specific partner communities for an extended period of time. We work in depth not breadth. Our focus is on increasing knowledge and capacity.",
+        "name": "World Camp",
+        "postal": "28801",
+        "state": "North Carolina",
+        "themes": {
+          "theme": [
+            {
+              "id": "climate",
+              "name": "Climate Change"
+            },
+            {
+              "id": "edu",
+              "name": "Education"
+            },
+            {
+              "id": "env",
+              "name": "Environment"
+            },
+            {
+              "id": "health",
+              "name": "Health"
+            }
+          ]
+        },
+        "totalProjects": 1,
+        "url": "http://www.worldcamp.co"
+      },
+      {
+        "activeProjects": 0,
+        "addressLine1": "39-Neel Vihar, Near 14-Sector Power House Indira Nagar",
+        "addressLine2": "",
+        "bridgeId": 2954291489,
+        "city": "Lucknow",
+        "countries": {
+          "country": [
+            {
+              "iso3166CountryCode": "IN",
+              "name": "India"
+            },
+            {
+              "iso3166CountryCode": "ID",
+              "name": "Indonesia"
+            },
+            {
+              "iso3166CountryCode": "SN",
+              "name": "Senegal"
+            }
+          ]
+        },
+        "country": "India",
+        "id": 9,
+        "iso3166CountryCode": "IN",
+        "logoUrl": "https://www.globalgiving.org/pfil/organ/9/orglogo.jpg",
+        "mission": "NEED's mission is to impact the lives of deprived citizens of society, particularly Women and Children, enabling them to reach their full potential and change their lives, particularly through the development of \"functional education.\" Therefore, the mission is to serve as a Center for Excellence towards a holistic approach to Women and Children.",
+        "name": "Network of Entrepreneurship & Economic Development",
+        "postal": "226016",
+        "state": "Uttar Pradesh",
+        "themes": {
+          "theme": [
+            {
+              "id": "ecdev",
+              "name": "Economic Development"
+            },
+            {
+              "id": "edu",
+              "name": "Education"
+            },
+            {
+              "id": "env",
+              "name": "Environment"
+            }
+          ]
+        },
+        "totalProjects": 3,
+        "url": "http://www.indianeedlko.org"
+      },
+      {
+        "activeProjects": 0,
+        "addressLine1": "1062 Lewiston Road",
+        "addressLine2": "",
+        "bridgeId": 5824171103,
+        "city": "New Gloucester",
+        "countries": {
+          "country": [
+            {
+              "iso3166CountryCode": "KH",
+              "name": "Cambodia"
+            }
+          ]
+        },
+        "country": "United States",
+        "id": 10,
+        "iso3166CountryCode": "US",
+        "mission": "The mission of FOCUS is to pursue humanitarian programs that include medical aid, school construction and supplies, distribution of rice and rice seeds, road improvements, agricultural improvements, fish farms, basic housing, hospital restoration, school scholarships, and loans for infrastructure improvements. We want to help disadvantaged youth and their families, if they have any, in a country where the infrastructure is still weak due to Khmer Rouge depredations.",
+        "name": "Friends of Cambodia in the U.S.  (FOCUS)",
+        "postal": "4260",
+        "state": "Maine",
+        "themes": {
+          "theme": [
+            {
+              "id": "health",
+              "name": "Health"
+            }
+          ]
+        },
+        "totalProjects": 2,
+        "url": ""
+      },
+      {
+        "activeProjects": 1,
+        "addressLine1": "SAMADHAN'S HUMAN RESOURCE CENTER Pocket 2, Sector 2,",
+        "addressLine2": "Dwarka",
+        "bridgeId": 7303247454,
+        "city": "New Delhi",
+        "countries": {
+          "country": [
+            {
+              "iso3166CountryCode": "IN",
+              "name": "India"
+            }
+          ]
+        },
+        "country": "India",
+        "id": 11,
+        "iso3166CountryCode": "IN",
+        "logoUrl": "https://www.globalgiving.org/pfil/organ/11/orglogo.jpg",
+        "mission": ".MISSION STATEMENT: \"To establish an infrastructure of accessible services for persons with intellectual disability living in poverty using as far as possible manpower and resources available within target communities, with active community participation, leading to an inclusive society\"",
+        "name": "Samadhan",
+        "postal": "110075",
+        "state": "Delhi",
+        "themes": {
+          "theme": [
+            {
+              "id": "children",
+              "name": "Children"
+            },
+            {
+              "id": "ecdev",
+              "name": "Economic Development"
+            },
+            {
+              "id": "edu",
+              "name": "Education"
+            },
+            {
+              "id": "gender",
+              "name": "Women and Girls"
+            },
+            {
+              "id": "health",
+              "name": "Health"
+            },
+            {
+              "id": "rights",
+              "name": "Human Rights"
+            }
+          ]
+        },
+        "totalProjects": 18,
+        "url": "http://www.samadhanindia.org"
+      }
+    ]
+  }
+}
