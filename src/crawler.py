@@ -20,31 +20,43 @@ def main():
     # JSON files to write to
     with open("orgs.json", "w") as orgs_json:
 
-        r = requests.get("https://api.globalgiving.org/api/public/orgservice/all/organizations" +
-                        "?api_key=" + 
-                        global_giving_key,
-                        headers=headers)
+        r = requests.get(
+            "https://api.globalgiving.org/api/public/orgservice/all/organizations"
+            + "?api_key="
+            + global_giving_key,
+            headers=headers,
+        )
 
         # Initial setup
-        next_org_id = r
-        has_next = True
-        orgs_list = []
+        orgs = r.json().get("organizations")
+
+        if orgs is None:
+            print("No orgs")
+            sys.exit(1)
+
+        next_org_id = orgs.get("nextOrgId")
+        has_next = orgs.get("hasNext")
+        orgs_list = [parse_org_info(org) for org in orgs["organization"]]
         error_count = 0
+        last_non_error = 0
 
-        # 30000 is so the loop doesn't run forever if we get a 400 because there are around 25000 orgs
-        while has_next and next_org_id < 30000:
+        while has_next:
             # Requesting orgs from Global Giving API
-            r = requests.get("https://api.globalgiving.org/api/public/orgservice/all/organizations" +
-                            "?api_key=" + 
-                            global_giving_key +
-                            "&nextOrgId=" +
-                            str(next_org_id),
-                            headers=headers)
+            r = requests.get(
+                "https://api.globalgiving.org/api/public/orgservice/all/organizations"
+                + "?api_key="
+                + global_giving_key
+                + "&nextOrgId="
+                + str(next_org_id),
+                headers=headers,
+            )
 
-            orgs = r.json().get("orgs")
+            orgs = r.json().get("organizations")
             print(next_org_id)
 
             if r.status_code != 200:
+                if next_org_id - 20 > last_non_error:
+                    break
                 print(r.status_code)
                 error_count += 1
                 if error_count >= 3:
@@ -53,31 +65,25 @@ def main():
                 continue
 
             if orgs is None:
-                print("No orgs" + str(next_org_id))
+                print("No orgs")
                 break
 
+            last_non_error = orgs["organization"][-1].get("id")
+
             # Grabbing next orgs
-            has_next = orgs["hasNext"]
+            has_next = orgs.get("hasNext")
             if has_next:
                 next_org_id = orgs.get("nextOrgId")
 
             # Recording orgs
-            orgs_list += [
-                parse_org_info(org) for org in orgs["organization"]
-            ]
+            orgs_list += [parse_org_info(org) for org in orgs["organization"]]
             time.sleep(0.5)
 
         # Removing duplicate organizations
-        orgs_list = remove_duplicate_organizations(orgs_list)
+        # orgs_list = remove_duplicate_organizations(orgs_list)
 
         # Writing orgs to JSON file
-        json.dump(
-            orgs_list,
-            orgs_json,
-            sort_keys=True,
-            indent=2,
-            ensure_ascii=False,
-        )
+        json.dump(orgs_list, orgs_json, sort_keys=True, indent=2, ensure_ascii=False)
 
 
 def get_org_key(org, keys):
@@ -108,21 +114,16 @@ def parse_org_info(org):
     Return: 
         Dictionary of filtered parameters from org json
     """
-    name = get_org_key(org, ["organization", "name"])
-    url = get_org_key(org, ["organization", "url"])
-    sub_themes = get_org_key(org, ["organization", "themes", "theme"])
-    country = get_org_key(org, ["organization", "country"])
+    name = get_org_key(org, ["name"])
+    url = get_org_key(org, ["url"])
+    themes = get_org_key(org, ["themes", "theme"])
+    country = get_org_key(org, ["country"])
 
-    return {
-        "name": name,
-        "url": url,
-        "subThemes": sub_themes,
-        "country": country,
-    }
+    return {"name": name, "url": url, "themes": themes, "country": country}
 
 
+"""
 def remove_duplicate_organizations(orgs):
-    """ super rough method to remove duplicates pls no judge """
     # Initializing set and list and size trackers
     organizations = {"empty"}
     organizations.remove("empty")
@@ -139,7 +140,7 @@ def remove_duplicate_organizations(orgs):
             cleaned_orgs.append(org)
 
     return cleaned_orgs
-
+"""
 
 if __name__ == "__main__":
     main()
