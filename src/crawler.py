@@ -18,79 +18,80 @@ def main():
     headers = {"Accept": "application/json"}
 
     # JSON files to write to
-    projects_json = open("projects.json", "w")
+    with open("orgs.json", "w") as orgs_json:
 
-    r = requests.get("https://api.globalgiving.org/api/public/orgservice/all/organizations" +
-                    "?api_key=" + 
-                    global_giving_key,
-                    headers=headers)
+        r = requests.get("https://api.globalgiving.org/api/public/orgservice/all/organizations" +
+                        "?api_key=" + 
+                        global_giving_key,
+                        headers=headers)
 
-    # Initial setup
-    next_org_id = 2
-    has_next = True
-    projects_list = []
-    error_count = 0
+        # Initial setup
+        next_org_id = r
+        has_next = True
+        orgs_list = []
+        error_count = 0
 
-    # 30000 is so the loop doesn't run forever if we get a 400 because there are around 25000 projects
-    while has_next and next_org_id < 30000:
-        # Requesting projects from Global Giving API
-    r = requests.get("https://api.globalgiving.org/api/public/orgservice/all/organizations" +
-                    "?api_key=" + 
-                    global_giving_key +
-                    "&nextOrgId=" +
-                    str(next_org_id),
-                    headers=headers)
+        # 30000 is so the loop doesn't run forever if we get a 400 because there are around 25000 orgs
+        while has_next and next_org_id < 30000:
+            # Requesting orgs from Global Giving API
+            r = requests.get("https://api.globalgiving.org/api/public/orgservice/all/organizations" +
+                            "?api_key=" + 
+                            global_giving_key +
+                            "&nextOrgId=" +
+                            str(next_org_id),
+                            headers=headers)
 
-        projects = r.json().get("projects")
-        print(next_org_id)
+            orgs = r.json().get("orgs")
+            print(next_org_id)
 
-        if r.status_code != 200:
-            print(r.status_code)
-            error_count += 1
-            if error_count >= 3:
-                next_org_id += 1
-                error_count = 0
-            continue
+            if r.status_code != 200:
+                print(r.status_code)
+                error_count += 1
+                if error_count >= 3:
+                    next_org_id += 1
+                    error_count = 0
+                continue
 
-        if projects is None:
-            print("No projects" + str(next_org_id))
-            break
+            if orgs is None:
+                print("No orgs" + str(next_org_id))
+                break
 
-        # Grabbing next projects
-        has_next = projects["hasNext"]
-        if has_next:
-            next_org_id = projects["nextProjectId"]
+            # Grabbing next orgs
+            has_next = orgs["hasNext"]
+            if has_next:
+                next_org_id = orgs.get("nextOrgId")
 
-        # Recording projects
-        projects_list += [
-            parse_project_info(project) for project in projects["project"]
-        ]
-        time.sleep(0.5)
+            # Recording orgs
+            orgs_list += [
+                parse_org_info(org) for org in orgs["organization"]
+            ]
+            time.sleep(0.5)
 
-    # Removing duplicate organizations
-    projects_list = remove_duplicate_organizations(projects_list)
+        # Removing duplicate organizations
+        orgs_list = remove_duplicate_organizations(orgs_list)
 
-    # Writing projects to JSON file
-    json.dump(
-        projects_list,
-        sort_keys=True,
-        indent=2,
-        ensure_ascii=False,
-    )
+        # Writing orgs to JSON file
+        json.dump(
+            orgs_list,
+            orgs_json,
+            sort_keys=True,
+            indent=2,
+            ensure_ascii=False,
+        )
 
 
-def get_project_key(project, keys):
-    """ Helper method to find project properties
+def get_org_key(org, keys):
+    """ Helper method to find org properties
     Finds properties in given keys, if not, returns ''
 
     Args: 
-        project: projects json returned by Global Giving's API
-        keys: keys to iterate through project to find desired value
+        org: orgs json returned by Global Giving's API
+        keys: keys to iterate through org to find desired value
 
     Return:
-        Object found in project key(s)
+        Object found in org key(s)
     """
-    result = project
+    result = org
     for key in keys:
         result = result.get(key)
     if result is not None:
@@ -98,19 +99,19 @@ def get_project_key(project, keys):
     return ""
 
 
-def parse_project_info(project):
-    """ Helper method to parse projects and filter relevant data 
+def parse_org_info(org):
+    """ Helper method to parse orgs and filter relevant data 
 
     Args:
-        project: projects json returned by Global Giving's API
+        org: orgs json returned by Global Giving's API
 
     Return: 
-        Dictionary of filtered parameters from project json
+        Dictionary of filtered parameters from org json
     """
-    name = get_project_key(project, ["organization", "name"])
-    url = get_project_key(project, ["organization", "url"])
-    sub_themes = get_project_key(project, ["organization", "themes", "theme"])
-    country = get_project_key(project, ["organization", "country"])
+    name = get_org_key(org, ["organization", "name"])
+    url = get_org_key(org, ["organization", "url"])
+    sub_themes = get_org_key(org, ["organization", "themes", "theme"])
+    country = get_org_key(org, ["organization", "country"])
 
     return {
         "name": name,
@@ -120,24 +121,24 @@ def parse_project_info(project):
     }
 
 
-def remove_duplicate_organizations(projects):
+def remove_duplicate_organizations(orgs):
     """ super rough method to remove duplicates pls no judge """
     # Initializing set and list and size trackers
     organizations = {"empty"}
     organizations.remove("empty")
-    cleaned_projects = []
+    cleaned_orgs = []
     initSize = 0
     afterSize = 0
 
-    for project in projects:
+    for org in orgs:
         initSize = len(organizations)
-        organizations.add(project["name"])
+        organizations.add(org["name"])
         afterSize = len(organizations)
 
         if initSize < afterSize:
-            cleaned_projects.append(project)
+            cleaned_orgs.append(org)
 
-    return cleaned_projects
+    return cleaned_orgs
 
 
 if __name__ == "__main__":
