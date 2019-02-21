@@ -10,30 +10,28 @@ def main():
     """ Retrieves and parses information from Global Giving's API
         and writes it to a json file """
 
-    # loads global giving api key
+    # Loads global giving api key
     load_dotenv()
     global_giving_key = os.getenv("GLOBAL_GIVING_KEY")
 
     # Specifying API to return JSON
     headers = {"Accept": "application/json"}
 
-    # JSON files to write to
+    # Extracting organizations from API
     with open("orgs.json", "w") as orgs_json:
-
         r = requests.get(
             "https://api.globalgiving.org/api/public/orgservice/all/organizations"
             + "?api_key="
             + global_giving_key,
             headers=headers,
         )
-
-        # Initial setup
         orgs = r.json().get("organizations")
 
         if orgs is None:
             print("No orgs")
             sys.exit(1)
 
+        # Initial setup
         next_org_id = orgs.get("nextOrgId")
         has_next = orgs.get("hasNext")
         orgs_list = [parse_org_info(org) for org in orgs["organization"]]
@@ -50,10 +48,9 @@ def main():
                 + str(next_org_id),
                 headers=headers,
             )
-
             orgs = r.json().get("organizations")
-            print(next_org_id)
 
+            # Checking for status errors
             if r.status_code != 200:
                 if next_org_id - 20 > last_non_error:
                     break
@@ -78,9 +75,6 @@ def main():
             # Recording orgs
             orgs_list += [parse_org_info(org) for org in orgs["organization"]]
             time.sleep(0.5)
-
-        # Removing duplicate organizations
-        # orgs_list = remove_duplicate_organizations(orgs_list)
 
         # Writing orgs to JSON file
         json.dump(orgs_list, orgs_json, sort_keys=True, indent=2, ensure_ascii=False)
@@ -121,26 +115,6 @@ def parse_org_info(org):
 
     return {"name": name, "url": url, "themes": themes, "country": country}
 
-
-"""
-def remove_duplicate_organizations(orgs):
-    # Initializing set and list and size trackers
-    organizations = {"empty"}
-    organizations.remove("empty")
-    cleaned_orgs = []
-    initSize = 0
-    afterSize = 0
-
-    for org in orgs:
-        initSize = len(organizations)
-        organizations.add(org["name"])
-        afterSize = len(organizations)
-
-        if initSize < afterSize:
-            cleaned_orgs.append(org)
-
-    return cleaned_orgs
-"""
 
 if __name__ == "__main__":
     main()
