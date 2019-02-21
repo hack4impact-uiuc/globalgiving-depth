@@ -20,10 +20,12 @@ def main():
     # JSON files to write to
     with open("orgs.json", "w") as orgs_json:
 
-        r = requests.get("https://api.globalgiving.org/api/public/orgservice/all/organizations" +
-                        "?api_key=" + 
-                        global_giving_key,
-                        headers=headers)
+        r = requests.get(
+            "https://api.globalgiving.org/api/public/orgservice/all/organizations"
+            + "?api_key="
+            + global_giving_key,
+            headers=headers,
+        )
 
         # Initial setup
         orgs = r.json().get("organizations")
@@ -40,12 +42,14 @@ def main():
 
         while has_next:
             # Requesting orgs from Global Giving API
-            r = requests.get("https://api.globalgiving.org/api/public/orgservice/all/organizations" +
-                            "?api_key=" + 
-                            global_giving_key +
-                            "&nextOrgId=" +
-                            str(next_org_id),
-                            headers=headers)
+            r = requests.get(
+                "https://api.globalgiving.org/api/public/orgservice/all/organizations"
+                + "?api_key="
+                + global_giving_key
+                + "&nextOrgId="
+                + str(next_org_id),
+                headers=headers,
+            )
 
             orgs = r.json().get("organizations")
             print(next_org_id)
@@ -72,22 +76,14 @@ def main():
                 next_org_id = orgs.get("nextOrgId")
 
             # Recording orgs
-            orgs_list += [
-                parse_org_info(org) for org in orgs["organization"]
-            ]
+            orgs_list += [parse_org_info(org) for org in orgs["organization"]]
             time.sleep(0.5)
 
         # Removing duplicate organizations
         # orgs_list = remove_duplicate_organizations(orgs_list)
 
         # Writing orgs to JSON file
-        json.dump(
-            orgs_list,
-            orgs_json,
-            sort_keys=True,
-            indent=2,
-            ensure_ascii=False,
-        )
+        json.dump(orgs_list, orgs_json, sort_keys=True, indent=2, ensure_ascii=False)
 
 
 def get_org_key(org, keys):
@@ -123,12 +119,8 @@ def parse_org_info(org):
     themes = get_org_key(org, ["themes", "theme"])
     country = get_org_key(org, ["country"])
 
-    return {
-        "name": name,
-        "url": url,
-        "themes": themes,
-        "country": country,
-    }
+    return {"name": name, "url": url, "themes": themes, "country": country}
+
 
 """
 def remove_duplicate_organizations(orgs):
