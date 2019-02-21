@@ -7,8 +7,10 @@ from dotenv import load_dotenv
 
 
 def main():
-    """ Retrieves and parses information from Global Giving's API
-        and writes it to a json file """
+    """ 
+    Retrieves and parses information from Global Giving's API
+    and writes it to a json file 
+    """
 
     # Loads global giving api key
     load_dotenv()
@@ -81,7 +83,8 @@ def main():
 
 
 def get_org_key(org, keys):
-    """ Helper method to find org properties
+    """ 
+    Helper method to find org properties
     Finds properties in given keys, if not, returns ''
 
     Args: 
@@ -100,7 +103,8 @@ def get_org_key(org, keys):
 
 
 def parse_org_info(org):
-    """ Helper method to parse orgs and filter relevant data 
+    """ 
+    Helper method to parse orgs and filter relevant data 
 
     Args:
         org: orgs json returned by Global Giving's API
