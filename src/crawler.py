@@ -33,20 +33,30 @@ def main():
                 "https://api.globalgiving.org/api/public/projectservice/all/projects/"
                 + "?api_key="
                 + str(global_giving_key)
-                + "&next_project_id="
+                + "&nextProjectId="
                 + str(next_project_id),
                 headers=headers,
             )
-            projects = r.json()["projects"]
-#            print(next_project_id)
+            projects = r.json().get("projects")
+            print(next_project_id)
         except Exception as e:
+            print(e)
             print(r.status_code)
             error_count += 1
             if error_count >= 3:
                 next_project_id += 1
                 error_count = 0
             break
-
+        if r.status_code != 200:
+            print(r.status_code)
+            error_count += 1
+            if error_count >= 3:
+                next_project_id += 1
+                error_count = 0
+            break
+        if projects is None:
+            print("no projects" + str(next_project_id))
+            break
         # Grabbing next projects
         has_next = projects["hasNext"]
         if has_next:
@@ -59,7 +69,7 @@ def main():
         time.sleep(0.5)
 
     # Removing duplicate organizations
-    projects_list = removeDuplicateOrganizations(projects_list)
+    projects_list = remove_duplicate_organizations(projects_list)
 
     # Writing projects to JSON file
     json.dump(
@@ -113,11 +123,12 @@ def parse_project_info(project):
         "country": country,
     }
 
-def removeDuplicateOrganizations(projects):
-    ''' super rough method to remove duplicates pls no judge '''
+
+def remove_duplicate_organizations(projects):
+    """ super rough method to remove duplicates pls no judge """
     # Initializing set and list and size trackers
-    organizations = {'empty'}
-    organizations.remove('empty')
+    organizations = {"empty"}
+    organizations.remove("empty")
     cleaned_projects = []
     initSize = 0
     afterSize = 0
@@ -127,7 +138,7 @@ def removeDuplicateOrganizations(projects):
         organizations.add(project["name"])
         afterSize = len(organizations)
 
-        if (initSize < afterSize):
+        if initSize < afterSize:
             cleaned_projects.append(project)
 
     return cleaned_projects
