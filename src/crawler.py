@@ -122,7 +122,6 @@ def removeDuplicateOrganizations(projects):
     initSize = 0
     afterSize = 0
 
-
     for project in projects:
         initSize = len(organizations)
         organizations.add(project["name"])
