@@ -28,3 +28,8 @@ def get_dataset(simple=False):
         )
 
     return dataset
+
+    def upload():
+        """
+        stub
+        """
