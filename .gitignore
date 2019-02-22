@@ -11,6 +11,9 @@
 # Mac Files
 **/.DS_Store
 
+# Pipfile
+Pipfile*
+
 # ENV Variables
 .env
 .jwt
