@@ -5,6 +5,7 @@
 
 # Pycache and MISC
 **/__pycache__/
+**/.pytest_cache*
 *.pyc
 *.secret
 
