@@ -80,25 +80,6 @@ def main():
         json.dump(orgs_list, orgs_json, sort_keys=True, indent=2, ensure_ascii=False)
 
 
-def get_org_key(org, keys):
-    """ Helper method to find org properties
-    Finds properties in given keys, if not, returns ''
-
-    Args: 
-        org: orgs json returned by Global Giving's API
-        keys: keys to iterate through org to find desired value
-
-    Return:
-        Object found in org key(s)
-    """
-    result = org
-    for key in keys:
-        result = result.get(key)
-    if result is not None:
-        return result
-    return ""
-
-
 def parse_org_info(org):
     """ Helper method to parse orgs and filter relevant data 
 
@@ -108,10 +89,10 @@ def parse_org_info(org):
     Return: 
         Dictionary of filtered parameters from org json
     """
-    name = get_org_key(org, ["name"])
-    url = get_org_key(org, ["url"])
-    themes = get_org_key(org, ["themes", "theme"])
-    country = get_org_key(org, ["country"])
+    name = org.get("name")
+    url = org.get("url")
+    themes = org.get("themes").get("theme")
+    country = org.get("country")
 
     return {"name": name, "url": url, "themes": themes, "country": country}
 
