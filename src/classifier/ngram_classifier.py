@@ -1,12 +1,10 @@
 import sys
 import json
-import re
 
-import numpy as np
-from sklearn.feature_extraction.text import TfidfVectorizer
+from ngram_base import get_words, get_tfidf_values
 
 def main():
-    with open(sys.argv[1], "r") as input_file: # ../visible-text/scraping_data.json
+    with open(sys.argv[1], "r") as input_file:  # ../visible-text/scraping_data.json
         input_data = json.load(input_file)
     data = {}
     data["projects"] = []
@@ -14,36 +12,41 @@ def main():
     for p in input_data["projects"]:
         project = {}
         project["url"] = p["url"]
+        project["themes"] = []
         if len(p["text"]) != 0:
             project["text"] = p["text"]
             words = get_words(project["text"])
         data["projects"].append(project)
 
-    tfid_values = get_tfid_values(x["text"] for x in data["projects"]) # need to map to themes list
-    # take top "n" most important words, 
+    tfidf_values, features = get_tfidf_values(
+        x["text"] for x in data["projects"]
+    )
+    features_set = set(features)
 
-    with open(sys.argv[2], "w") as output_file: # scores.json
+    with open("training_scores.json", "r") as training_data_file:
+        training_data = json.load(training_data_file)
+    training_features = training_data["features"]
+    training_indices = []
+    for i in range(len(training_features)):
+        if training_features[i] in features_set:
+            training_indices.append(i)
+    for project in data["projects"]:
+        project.pop("text", None)
+        for index in training_indices:
+            for training_project in training_data["projects"]:
+                for training_theme in training_project["themes"]:
+                    if training_theme not in project["themes"]:
+                        project["themes"].append(training_theme)
+                    for theme in project["themes"]:
+                        if "confidence" in theme:
+                            theme["confidence"] += training_project["tfidf_values"][index]
+                        else:
+                            theme["confidence"] = 0
+    # take top "m" most important n-grams, search testing data to see if present and make a guess?
+    # find common n-grams, add up values, rank
+
+    with open(sys.argv[2], "w") as output_file:  # classified_data.json
         json.dump(data, output_file)
-
-def get_words(text):
-    text = text.lower()
-    wordlist = text.split()
-    clean_list = []
-    for word in wordlist:
-        # only get words (no digits)
-        if not word.isdigit() and not re.match(r'[^\w]', word):
-            clean_list.append(word)
-
-    return " ".join(clean_list)
-
-def get_tfid_values(words):
-    vectorizer = TfidfVectorizer(ngram_range=(2,2)) # bigrams
-    X = vectorizer.fit_transform(list(words))
-    arr = X.toarray()
-    return arr
-    # print(np.argmax(arr[1]))
-    # print(arr[1][627])
-    # print(vectorizer.get_feature_names()[627])
 
 if __name__ == "__main__":
     main()
