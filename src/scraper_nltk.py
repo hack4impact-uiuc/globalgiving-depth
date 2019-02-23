@@ -12,6 +12,7 @@ import string
 
 # import NLTK
 import nltk
+from nltk.stem.snowball import SnowballStemmer
 
 
 def main():
@@ -44,9 +45,12 @@ def get_words(text):
         if not word.isdigit() and not re.match(r'[^\w]', word):
             # remove punctuation from words
             word = re.sub('['+string.punctuation+']', '', word)
-            clean_list.append(word)
+            if not re.match(r'[0-9]+', word):
+                word = re.sub(r'[0-9]+', '', word)
+                clean_list.append(word)
 
     words = remove_stop_words(clean_list)
+    words = stem_words(words)
     return words
 
 
@@ -58,6 +62,12 @@ def remove_stop_words(words):
             new_wordlist.append(word)
     return new_wordlist
 
+def stem_words(words):
+    stemmer = SnowballStemmer("english")
+    new_wordlist = []
+    for word in words:
+        new_wordlist.append(stemmer.stem(word))
+    return new_wordlist
 
 def get_top_100_words(words):
     word_count = get_word_count(words)
