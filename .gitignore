@@ -18,3 +18,7 @@ Pipfile*
 # ENV Variables
 .env
 .jwt
+
+# Pipenv files
+Pipfile
+Pipfile.lock
