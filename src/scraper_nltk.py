@@ -16,7 +16,7 @@ from nltk.stem.snowball import SnowballStemmer
 
 
 def main():
-    with open(sys.argv[1], "r") as input_file:
+    with open("json/" + sys.argv[1], "r") as input_file:
         input_data = json.load(input_file)
     nltk_data = {}
     nltk_data["projects"] = []
@@ -32,7 +32,7 @@ def main():
                 words)
         nltk_data["projects"].append(nltk_project)
 
-    with open(sys.argv[2], "w") as output_file:
+    with open("json/" + sys.argv[2], "w") as output_file:
         json.dump(nltk_data, output_file)
 
 

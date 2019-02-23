@@ -9,23 +9,26 @@ import re
 
 
 def main():
-    with open(sys.argv[1], "r") as input_file:
+    with open("json/" + sys.argv[1], "r") as input_file:
         input_data = json.load(input_file)
-
-    url_list = []
-    for project in input_data["projects"]:
-        if len(project["url"]) != 0:
-            url_list.append(project["url"])
 
     scraping_data = {}
     scraping_data["projects"] = []
-    for url in url_list:
-        project = {}
-        project["url"] = url
-        project["text"] = text_scraper(url)
-        scraping_data["projects"].append(project)
 
-    with open(sys.argv[2], "w") as output_file:
+    for project in input_data["projects"]:
+        if len(project["url"]) != 0:
+            new_project = {}
+            new_project["country"] = project["country"]
+            new_project["name"] = project["name"]
+            new_project["themes"] = {}
+            new_project["themes"][0] = {}
+            new_project["themes"][0]["id"] = project["themes"][0]["id"]
+            new_project["themes"][0]["name"] = project["themes"][0]["name"]
+            new_project["url"] = project["url"]
+            new_project["text"] = text_scraper(new_project["url"])
+            scraping_data["projects"].append(new_project)
+
+    with open("json/" + sys.argv[2], "w") as output_file:
         json.dump(scraping_data, output_file)
 
     input_file.close()
@@ -46,6 +49,9 @@ def text_scraper(url):
     try:
         request = requests.get(url)
     except requests.exceptions.ConnectionError as e:
+        print(e)
+        return ""
+    except requests.exceptions.InvalidSchema as e:
         print(e)
         return ""
 
@@ -70,6 +76,8 @@ def get_other_links(soup, url):
     links = set()
 
     body = soup.find('body')
+    if not body.findChildren():
+        return ""
     body_contents = body.findChildren()[0]
     tags = body_contents.findAll(href=True)
     regex = re.compile("^" + url)
