@@ -5,12 +5,20 @@
 
 # Pycache and MISC
 **/__pycache__/
+**/.pytest_cache*
 *.pyc
 *.secret
 
 # Mac Files
 **/.DS_Store
 
+# Pipfile
+Pipfile*
+
 # ENV Variables
 .env
 .jwt
+
+# Pipenv files
+Pipfile
+Pipfile.lock

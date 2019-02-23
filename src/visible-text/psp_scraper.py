@@ -1,6 +1,5 @@
 import sys
 import re
-import multiprocessing as mp
 import json
 import requests
 from bs4 import BeautifulSoup
