@@ -32,4 +32,4 @@ workflows:
   build-test:
     jobs:
       - lint
-      # - test
+      - test

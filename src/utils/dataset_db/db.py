@@ -22,7 +22,7 @@ def get_collection() -> pymongo.collection.Collection:
     return db_collection
 
 
-def get_dataset(simple=False) -> list:
+def get_dataset(simple=False, db_collection=get_collection()) -> list:
     """
     This method retreives the dataset of NGO records from the mongodb instance.
     Input:
@@ -31,7 +31,6 @@ def get_dataset(simple=False) -> list:
     Output:
         dataset: a list containing dictionaries of NGO records
     """
-    db_collection = get_collection()  # get the collection
     dataset = [org for org in db_collection.find()]  # store all orgs in list
 
     # pick out only the name and url if we've queried with `simple=True`
@@ -43,7 +42,7 @@ def get_dataset(simple=False) -> list:
     return dataset
 
 
-def upload_many(organizations: list):
+def upload_many(organizations: list, db_collection=get_collection()):
     """
     This method provides a way to upload all organizations found through the
     GlobalGiving public API. It avoids uploading duplicate organizations by
@@ -54,7 +53,7 @@ def upload_many(organizations: list):
     # it would be really easy to try to upload one organization outside of a
     # list, but this use case is not anticipated to be the primary one
     if not isinstance(organizations, list):
-        return
+        raise TypeError("upload_many() only accepts a list of dicts")
 
     # Create an id for each document. Hopefully these are unique enough to
     # avoid collisions where necessary, but not unique enough to get duplicate
@@ -63,8 +62,6 @@ def upload_many(organizations: list):
         org.update(
             _id=hashlib.md5((org["name"] + org["url"]).encode("utf-8")).hexdigest()
         )
-
-    db_collection = get_collection()
 
     # Go through each organization and upsert it to the database. Use the name
     # concatenated with the url as the id. If there is an id collision, skip
