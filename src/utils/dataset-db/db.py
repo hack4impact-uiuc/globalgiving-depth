@@ -1,5 +1,6 @@
 import os
 import json
+import hashlib
 import dotenv
 import pymongo
 
@@ -42,33 +43,39 @@ def get_dataset(simple=False) -> list:
     return dataset
 
 
-def upload_many(organizations: list) -> bool:
+def upload_many(organizations: list):
     """
     This method provides a way to upload all organizations found through the
     GlobalGiving public API. It avoids uploading duplicate organizations by
     first checking if it already exists.
     Input:
         organizatons: this is list of org dictionaries
-    Output:
-        a boolean flag which indicates the success of the upload
     """
     # it would be really easy to try to upload one organization outside of a
     # list, but this use case is not anticipated to be the primary one
     if not isinstance(organizations, list):
-        return False
+        return
+
+    # Create an id for each document. Hopefully these are unique enough to
+    # avoid collisions where necessary, but not unique enough to get duplicate
+    # records.
+    for org in organizations:
+        org.update(
+            _id=hashlib.md5((org["name"] + org["url"]).encode("utf-8")).hexdigest()
+        )
 
     db_collection = get_collection()
 
-    # Go through each organization and upsert it to the database. This means
-    # that we look for an existing record that matches the candidate record. If
-    # we find a match, we update. If not, we insert.
-    for org in organizations:
-        db_collection.update(org, org, {upsert: True})
+    # Go through each organization and upsert it to the database. Use the name
+    # concatenated with the url as the id. If there is an id collision, skip
+    # the organization. `ordered=False` so all inserts will be attempted.
+    try:
+        db_collection.insert_many(organizations, ordered=False)
+    except pymongo.errors.BulkWriteError as bwe:
+        print(json.dumps(dict(bwe.details), indent=2))
 
-    return True
 
-
-def upload_from_file(filepath: str) -> bool:
+def upload_from_file(filepath: str):
     """
     Method to upload organizations from a given filepath.
     Input:
@@ -76,8 +83,12 @@ def upload_from_file(filepath: str) -> bool:
     Output:
         a boolean flag which indicates success
     """
-    pass
+    # open the file and read in the list
+    with open(filepath, "r") as json_file:
+        orgs = json.load(json_file)
+    # send to upload
+    upload_many(orgs)
 
 
 if __name__ == "__main__":
-    assert upload_from_file("../../get-orgs/orgs.json")
+    upload_from_file("../../get-orgs/orgs.json")
