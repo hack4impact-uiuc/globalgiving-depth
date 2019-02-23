@@ -31,6 +31,6 @@ def test_get_dataset():
     assert collection.count_documents({}) == 0  # empty
     db.upload_many(ORGS, db_collection=collection)
     assert collection.count_documents({}) == 60  # insert all docs
-    dataset = db.get_dataset()
+    dataset = db.get_dataset(db_collection=collection)
     assert dataset is not None
     assert len(dataset) == 60
