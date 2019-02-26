@@ -2,6 +2,23 @@ import re
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 
+def populate_dict(input_data):
+    data = {}
+    data["projects"] = []
+    
+    for p in input_data["projects"]:
+        project = {}
+        project["url"] = p["url"]
+        if len(p["text"]) != 0:
+            project["words"] = get_words(p["text"])
+        if "themes" in p:
+            project["themes"] = p["themes"]
+        else:
+            project["themes"] = []
+        data["projects"].append(project)
+    
+    return data
+
 def get_words(text):
     text = text.lower()
     wordlist = text.split()
