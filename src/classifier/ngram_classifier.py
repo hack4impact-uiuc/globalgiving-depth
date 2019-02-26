@@ -32,9 +32,9 @@ def main():
 
     classifying_url_tfidf_feature_df = pd.DataFrame(
         {
-            "urls": classifying_urls,
-            "tfidf_values": classifying_values,
-            "features": classifying_features,
+            "url": classifying_urls,
+            "tfidf_value": classifying_values,
+            "feature": classifying_features,
         }
     )
 
@@ -61,10 +61,10 @@ def main():
 
     training_url_tfidf_feature_df = pd.DataFrame(
         {
-            "urls": training_urls,
+            "url": training_urls,
             "theme": training_themes,
-            "tfidf_values": training_values,
-            "features": training_features,
+            "tfidf_value": training_values,
+            "feature": training_features,
         }
     )
 
