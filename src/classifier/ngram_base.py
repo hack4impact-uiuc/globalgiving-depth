@@ -2,10 +2,11 @@ import re
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 
+
 def populate_dict(input_data):
     data = {}
     data["projects"] = []
-    
+
     for p in input_data["projects"]:
         project = {}
         project["url"] = p["url"]
@@ -16,8 +17,9 @@ def populate_dict(input_data):
         else:
             project["themes"] = []
         data["projects"].append(project)
-    
+
     return data
+
 
 def get_words(text):
     text = text.lower()
