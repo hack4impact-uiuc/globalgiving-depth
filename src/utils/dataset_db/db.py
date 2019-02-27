@@ -5,7 +5,7 @@ import dotenv
 import pymongo
 
 
-def get_collection() -> pymongo.collection.Collection:
+def get_collection(name="organizations") -> pymongo.collection.Collection:
     """
     This is a small method to retreive the uri from the environment and get the
     collection from the database, so we don't have to do it in every single
@@ -18,7 +18,7 @@ def get_collection() -> pymongo.collection.Collection:
 
     # get the collection from the database
     client = pymongo.MongoClient(uri)
-    db_collection = client.ggdb.organizations
+    db_collection = client.ggdb[name]
     return db_collection
 
 

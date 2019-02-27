@@ -3,54 +3,43 @@ import sys
 import requests
 import json
 import multiprocessing as mp
+import pymongo
 from bs4 import BeautifulSoup
 from bs4.element import Comment
 import re
+from utils.dataset_db.db import get_collection, upload_many
 
 
 def main():
-    with open("json/" + sys.argv[1], "r") as input_file:
-        input_data = json.load(input_file)
+    # cursor which goes through raw data on db
+    for project in get_collection().find():
+        if not project["url"] or project["url"].strip().startswith("mailto"):
+            continue
+        new_project = {}
+        new_project["country"] = project["country"]
+        new_project["name"] = project["name"]
+        if not project["themes"]:
+            continue
+        new_project["themes"] = []
+        theme = {}
+        theme["id"] = project["themes"][0]["id"]
+        theme["name"] = project["themes"][0]["name"]
+        new_project["themes"].append(theme)
+        new_project["url"] = project["url"]
+        new_project["text"] = text_scraper(new_project["url"])
 
-    scraping_data = {}
-    scraping_data["projects"] = []
-    with open("json/" + sys.argv[2], "a") as output_file:
-        output_file.write('{"projects": [')
-        for project in input_data["projects"]:
-            if len(project["url"]) != 0:
-                new_project = {}
-                new_project["country"] = project["country"]
-                new_project["name"] = project["name"]
-                if len(project["themes"]) < 1:
-                    continue
-                new_project["themes"] = []
-                theme = {}
-                theme["id"] = project["themes"][0]["id"]
-                theme["name"] = project["themes"][0]["name"]
-                new_project["themes"].append(theme)
-                new_project["url"] = project["url"]
-                new_project["text"] = text_scraper(new_project["url"])
-                json.dump(new_project, output_file)
-                output_file.write(",")
-                # scraping_data["projects"].append(new_project)
-        output_file.write("]}")
-    # with open("json/" + sys.argv[2], "w") as output_file:
-    #     json.dump(scraping_data, output_file)
-
-    input_file.close()
-    output_file.close()
+        # send org with text to db
+        upload_many([new_project], get_collection("organization-text"))
     return
 
 
-"""
-text_scraper can be used as a blackbox with a given url.
-It will RETURN a string with text parsed from:
-1) The original site
-2) Associated links
-"""
-
-
 def text_scraper(url):
+    """
+    text_scraper can be used as a blackbox with a given url.
+    It will RETURN a string with text parsed from:
+    1) The original site
+    2) Associated links
+    """
     assert type(url) == str
     try:
         request = requests.get(url)
@@ -84,7 +73,7 @@ def text_scraper(url):
 def get_other_links(soup, url):
     links = set()
 
-    body = soup.find('body')
+    body = soup.find("body")
     if not body.findChildren():
         return ""
     body_contents = body.findChildren()[0]
