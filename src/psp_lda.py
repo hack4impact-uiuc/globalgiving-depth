@@ -36,7 +36,7 @@ def main():
     # EVERYTHING HERE IS TEMPORARY (note that below lines will break if bad input)
     # Temporary random test for now on a random org
     # Once more scraped data, we can test on NEW/UNSEEN orgs
-    random_org = input_data["projects"][106]
+    random_org = input_data["projects"][86]
     test_lda_model(corpus_dict, lda_model, random_org["name"], random_org["text"])
     # Later, once I know for sure if this works well given more data for the LDA model,
     # I will output all results into .txt or .JSON files for further (manual?) classification
