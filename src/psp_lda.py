@@ -11,6 +11,11 @@ from nltk.stem import WordNetLemmatizer
 # from nltk.stem.snowball import SnowballStemmer
 from gensim.utils import simple_preprocess
 
+#TO DO
+#1) Fiddle around with params (including num of topics)
+#2) Look into Split Test Method
+#2a) Once we have 6000+ docs, use 5000 to train, the rest to test ??
+#3) Look into issue of not all sites being in English
 
 def main():
     with open(sys.argv[1], "r") as input_file:
@@ -23,7 +28,7 @@ def main():
             processed_text = preprocess_text(project_dict["text"])
             processed_projects.append(processed_text)
 
-    corpus_dict = create_corpus_dict(processed_projects, 0.6, 10000)
+    corpus_dict = create_corpus_dict(processed_projects, 0.3, 10000)
     lda_model = create_lda_model(corpus_dict, processed_projects, 10)
     for idx, topic in lda_model.print_topics(-1):
         print("Topic: {} \nWords: {}".format(idx, topic))
@@ -31,11 +36,10 @@ def main():
     # EVERYTHING HERE IS TEMPORARY (note that below lines will break if bad input)
     # Temporary random test for now on a random org
     # Once more scraped data, we can test on NEW/UNSEEN orgs
-    random_org = input_data["projects"][8]
+    random_org = input_data["projects"][106]
     test_lda_model(corpus_dict, lda_model, random_org["name"], random_org["text"])
     # Later, once I know for sure if this works well given more data for the LDA model,
     # I will output all results into .txt or .JSON files for further (manual?) classification
-
 
 def create_corpus_dict(processed_projects: list, max_proportion, num_keep):
     """
@@ -73,17 +77,18 @@ def test_lda_model(corpus_dict, lda_model, project_name, project_text):
     Tests the LDA Model by giving it a new project list, which is matched to LDA's topics.
     "Scores" indicate which topic matches new project best.
     """
+    if not project_text:
+        print("Cannot conduct test; no text scraped for Project " + project_name)
+        return
     bow_list = corpus_dict.doc2bow(preprocess_text(project_text))
     print("Testing LDA model on " + project_name)
     for index, score in sorted(lda_model[bow_list], key=lambda tup: -1 * tup[1]):
         print("Score: {}\t Topic: {}".format(score, lda_model.print_topic(index, 5)))
 
-
 def stem_word(text: str):
     wnl = WordNetLemmatizer()
     # Returns input word unchanged if can't be found in WordNet
     return wnl.lemmatize(text)
-
 
 def preprocess_text(text: str):
     """
@@ -97,7 +102,6 @@ def preprocess_text(text: str):
         if token not in stop_words:
             processed_text.append(stem_word(token))
     return processed_text
-
 
 if __name__ == "__main__":
     main()
