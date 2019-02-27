@@ -1,6 +1,5 @@
 import re
 import numpy as np
-from sklearn.feature_extraction.text import TfidfVectorizer
 
 
 def populate_dict(input_data):
@@ -42,6 +41,3 @@ def get_tfidf_values(words):
     X = vectorizer.fit_transform(list(words))
     arr = X.toarray()
     return arr, vectorizer.get_feature_names()
-    # print(np.argmax(arr[1]))
-    # print(arr[1][627])
-    # print(vectorizer.get_feature_names()[627])
