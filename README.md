@@ -1,4 +1,5 @@
-# globalgiving-depth
+# GlobalGiving Depth
+
 Gain a depth in insight into NGOs discovered through an automated process.
 
 After initial preprocessing, psp_lda.py eventually creates a list which contains, for each project, each word that appears and its count.
