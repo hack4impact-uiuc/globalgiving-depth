@@ -7,7 +7,7 @@ import pymongo
 from bs4 import BeautifulSoup
 from bs4.element import Comment
 import re
-from utils.dataset_db.db import get_collection, upload_many
+from utils.dataset_db.db import get_collection, upload_one
 
 
 def main():
@@ -30,7 +30,7 @@ def main():
 
         # send org with text to db
         if new_project["text"]:
-            upload_many([new_project], get_collection("organizations-text"))
+            upload_one(new_project, get_collection("organizations-text"))
     return
 
 

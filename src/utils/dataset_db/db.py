@@ -72,6 +72,25 @@ def upload_many(organizations: list, db_collection=get_collection()):
         print(json.dumps(dict(bwe.details), indent=2))
 
 
+def upload_one(org: dict, db_collection=get_collection()):
+    """
+    write something here
+    """
+    # docs docs docs
+    if not isinstance(org, dict):
+        raise TypeError("upload_one() only accepts a dict")
+
+    # Create an id for each document. Hopefully these are unique enough to
+    # avoid collisions where necessary, but not unique enough to get duplicate
+    # records.
+    org.update(_id=hashlib.md5((org["name"] + org["url"]).encode("utf-8")).hexdigest())
+
+    # Go through each organization and upsert it to the database. Use the name
+    # concatenated with the url as the id. If there is an id collision, skip
+    # the organization. `ordered=False` so all inserts will be attempted.
+    db_collection.update_one({"_id": org["_id"]}, {"$set": org}, upsert=True)
+
+
 def upload_from_file(filepath: str):
     """
     Method to upload organizations from a given filepath.
