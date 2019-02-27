@@ -23,7 +23,15 @@ def main():
 
     for project in input_data["projects"]:
         nltk_project = {}
+        nltk_project["country"] = project["country"]
+        nltk_project["name"] = project["name"]
+        nltk_project["themes"] = []
+        theme = {}
+        theme["id"] = project["themes"][0]["id"]
+        theme["name"] = project["themes"][0]["name"]
+        nltk_project["themes"].append(theme)
         nltk_project["url"] = project["url"]
+
         if len(project["text"]) != 0:
             text = project["text"]
             nltk_project["text"] = text
@@ -62,12 +70,14 @@ def remove_stop_words(words):
             new_wordlist.append(word)
     return new_wordlist
 
+
 def stem_words(words):
     stemmer = SnowballStemmer("english")
     new_wordlist = []
     for word in words:
         new_wordlist.append(stemmer.stem(word))
     return new_wordlist
+
 
 def get_top_100_words(words):
     word_count = get_word_count(words)

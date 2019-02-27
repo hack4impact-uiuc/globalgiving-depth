@@ -14,22 +14,28 @@ def main():
 
     scraping_data = {}
     scraping_data["projects"] = []
-
-    for project in input_data["projects"]:
-        if len(project["url"]) != 0:
-            new_project = {}
-            new_project["country"] = project["country"]
-            new_project["name"] = project["name"]
-            new_project["themes"] = {}
-            new_project["themes"][0] = {}
-            new_project["themes"][0]["id"] = project["themes"][0]["id"]
-            new_project["themes"][0]["name"] = project["themes"][0]["name"]
-            new_project["url"] = project["url"]
-            new_project["text"] = text_scraper(new_project["url"])
-            scraping_data["projects"].append(new_project)
-
-    with open("json/" + sys.argv[2], "w") as output_file:
-        json.dump(scraping_data, output_file)
+    with open("json/" + sys.argv[2], "a") as output_file:
+        output_file.write('{"projects": [')
+        for project in input_data["projects"]:
+            if len(project["url"]) != 0:
+                new_project = {}
+                new_project["country"] = project["country"]
+                new_project["name"] = project["name"]
+                if len(project["themes"]) < 1:
+                    continue
+                new_project["themes"] = []
+                theme = {}
+                theme["id"] = project["themes"][0]["id"]
+                theme["name"] = project["themes"][0]["name"]
+                new_project["themes"].append(theme)
+                new_project["url"] = project["url"]
+                new_project["text"] = text_scraper(new_project["url"])
+                json.dump(new_project, output_file)
+                output_file.write(",")
+                # scraping_data["projects"].append(new_project)
+        output_file.write("]}")
+    # with open("json/" + sys.argv[2], "w") as output_file:
+    #     json.dump(scraping_data, output_file)
 
     input_file.close()
     output_file.close()
@@ -52,6 +58,9 @@ def text_scraper(url):
         print(e)
         return ""
     except requests.exceptions.InvalidSchema as e:
+        print(e)
+        return ""
+    except requests.exceptions.TooManyRedirects as e:
         print(e)
         return ""
 
@@ -83,6 +92,8 @@ def get_other_links(soup, url):
     regex = re.compile("^" + url)
     for tag in tags:
         sub_url = tag.get("href")
+        if sub_url.startswith("mailto"):
+            continue
         if re.match(regex, sub_url):
             if sub_url not in links:
                 links.add(sub_url)
