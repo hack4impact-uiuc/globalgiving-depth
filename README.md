@@ -6,4 +6,7 @@ A LDA Model is created and then trained with the above list, which creates topic
 
 We can test new/unseen projects on the model and see which topics are deemed to have the highest correspondence with said project.
 
-NOTE: This differs from Eugenia's LDA model, which is a Guided LDA model. We decided to implement both to see which will work well, if any.
+NOTE 1: Right now, as I have only tested on a JSON of 52 scraped projects, the resulting topics are vague/inaccurate. 
+The model definitely needs more data, but the issue could also be that we need to switch to a Guided LDA Model (see Note 2).
+
+NOTE 2: This differs from Eugenia's LDA model, which is a Guided LDA model. We decided to implement both to see which will work well, if any.
