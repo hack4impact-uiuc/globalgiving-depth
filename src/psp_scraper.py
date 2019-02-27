@@ -29,7 +29,8 @@ def main():
         new_project["text"] = text_scraper(new_project["url"])
 
         # send org with text to db
-        upload_many([new_project], get_collection("organization-text"))
+        if new_project["text"]:
+            upload_many([new_project], get_collection("organizations-text"))
     return
 
 
@@ -43,6 +44,8 @@ def text_scraper(url):
     assert type(url) == str
     try:
         request = requests.get(url)
+        if request.status_code > 299:
+            return ""
     except requests.exceptions.ConnectionError as e:
         print(e)
         return ""

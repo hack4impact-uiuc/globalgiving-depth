@@ -9,6 +9,7 @@ import operator
 from collections import Counter
 import re
 import string
+from utils.dataset_db.db import get_collection, upload_many
 
 # import NLTK
 import nltk
@@ -16,12 +17,8 @@ from nltk.stem.snowball import SnowballStemmer
 
 
 def main():
-    with open("json/" + sys.argv[1], "r") as input_file:
-        input_data = json.load(input_file)
-    nltk_data = {}
-    nltk_data["projects"] = []
-
-    for project in input_data["projects"]:
+    # cursor which goes through scraped data on db
+    for project in get_collection("organizations-text").find():
         nltk_project = {}
         nltk_project["country"] = project["country"]
         nltk_project["name"] = project["name"]
@@ -31,17 +28,15 @@ def main():
         theme["name"] = project["themes"][0]["name"]
         nltk_project["themes"].append(theme)
         nltk_project["url"] = project["url"]
+        text = project["text"]
+        nltk_project["text"] = text
+        words = get_words(text)
+        nltk_project["most_freq_words"] = get_top_100_words(
+            words)
 
-        if len(project["text"]) != 0:
-            text = project["text"]
-            nltk_project["text"] = text
-            words = get_words(text)
-            nltk_project["most_freq_words"] = get_top_100_words(
-                words)
-        nltk_data["projects"].append(nltk_project)
-
-    with open("json/" + sys.argv[2], "w") as output_file:
-        json.dump(nltk_data, output_file)
+        # send org with frequencies to db
+        upload_many([nltk_project], get_collection("organizations-frequency"))
+    return
 
 
 def get_words(text):
