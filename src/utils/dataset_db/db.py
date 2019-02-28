@@ -5,7 +5,7 @@ import dotenv
 import pymongo
 
 
-def get_collection(name="organizations") -> pymongo.collection.Collection:
+def get_collection(name) -> pymongo.collection.Collection:
     """
     This is a small method to retreive the uri from the environment and get the
     collection from the database, so we don't have to do it in every single

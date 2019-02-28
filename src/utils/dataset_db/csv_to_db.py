@@ -11,9 +11,9 @@ def csv_upload(csv_path):
     orgs = []
     with open(csv_path, "r") as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=",")
-        line_count = 0
+        line_count = -1
         for row in csv_reader:
-            if line_count == 0:
+            if line_count == -1:
                 line_count += 1
             else:
                 org = {}
@@ -22,7 +22,8 @@ def csv_upload(csv_path):
                 org["url"] = row[2]
                 orgs.append(org)
                 line_count += 1
-
+        if line_count < 1:
+            raise EOFError
         print("Records parsed:", line_count)
 
     upload_many(orgs, db_collection=get_collection("organizations_unlabelled"))
