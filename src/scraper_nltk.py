@@ -31,8 +31,7 @@ def main():
         text = project["text"]
         nltk_project["text"] = text
         words = get_words(text)
-        nltk_project["most_freq_words"] = get_top_100_words(
-            words)
+        nltk_project["most_freq_words"] = get_top_100_words(words)
 
         # send org with frequencies to db
         upload_many([nltk_project], get_collection("organizations-frequency"))
@@ -45,11 +44,11 @@ def get_words(text):
     clean_list = []
     for word in wordlist:
         # only get words (no digits or punctuation)
-        if not word.isdigit() and not re.match(r'[^\w]', word):
+        if not word.isdigit() and not re.match(r"[^\w]", word):
             # remove punctuation from words
-            word = re.sub('['+string.punctuation+']', '', word)
-            if not re.match(r'[0-9]+', word):
-                word = re.sub(r'[0-9]+', '', word)
+            word = re.sub("[" + string.punctuation + "]", "", word)
+            if not re.match(r"[0-9]+", word):
+                word = re.sub(r"[0-9]+", "", word)
                 clean_list.append(word)
 
     words = remove_stop_words(clean_list)
