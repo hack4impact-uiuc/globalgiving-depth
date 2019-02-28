@@ -1,10 +1,6 @@
 from db import upload_many
-import json
 import csv
-import os
 import sys
-import pymongo
-import dotenv
 
 def csv_upload(csv_path):
     '''
@@ -28,21 +24,8 @@ def csv_upload(csv_path):
 
         print("Records parsed:",line_count)
 
-    upload_many(orgs, db_collection=get_unlabelled_collection())
+    upload_many(orgs, db_collection=get_collection("organizations_unlabelled"))
 
-
-def get_unlabelled_collection() -> pymongo.collection.Collection:
-    """
-    Stole this method from db.py to get the unlabelled collection instead.
-    """
-    # load the URI from the environment
-    assert dotenv.load_dotenv()
-    uri = os.getenv("MONGO_DB_URI")
-
-    # get the collection from the database
-    client = pymongo.MongoClient(uri)
-    db_collection = client.ggdb.organizations_unlabelled
-    return db_collection
 
 if __name__ == "__main__":
     csv_upload(sys.argv[1])
