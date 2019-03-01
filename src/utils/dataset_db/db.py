@@ -42,7 +42,7 @@ def get_dataset(db_collection, simple=False) -> list:
     return dataset
 
 
-def upload_many(db_collection, organizations: list):
+def upload_many(organizations: list, db_collection):
     """
     This method provides a way to upload all organizations found through the
     GlobalGiving public API. It avoids uploading duplicate organizations by
