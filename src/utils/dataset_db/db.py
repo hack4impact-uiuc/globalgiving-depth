@@ -5,7 +5,7 @@ import dotenv
 import pymongo
 
 
-def get_collection() -> pymongo.collection.Collection:
+def get_collection(name) -> pymongo.collection.Collection:
     """
     This is a small method to retreive the uri from the environment and get the
     collection from the database, so we don't have to do it in every single
@@ -18,11 +18,11 @@ def get_collection() -> pymongo.collection.Collection:
 
     # get the collection from the database
     client = pymongo.MongoClient(uri)
-    db_collection = client.ggdb.organizations
+    db_collection = client.ggdb[name]
     return db_collection
 
 
-def get_dataset(simple=False, db_collection=get_collection()) -> list:
+def get_dataset(db_collection, simple=False) -> list:
     """
     This method retreives the dataset of NGO records from the mongodb instance.
     Input:
@@ -42,7 +42,7 @@ def get_dataset(simple=False, db_collection=get_collection()) -> list:
     return dataset
 
 
-def upload_many(organizations: list, db_collection=get_collection()):
+def upload_many(organizations: list, db_collection):
     """
     This method provides a way to upload all organizations found through the
     GlobalGiving public API. It avoids uploading duplicate organizations by

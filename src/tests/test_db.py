@@ -17,9 +17,9 @@ def test_upload_many():
     """
     collection = mongomock.MongoClient().db.collection
     assert collection.count_documents({}) == 0  # empty
-    db.upload_many(ORGS, db_collection=collection)
+    db.upload_many(ORGS, collection)
     assert collection.count_documents({}) == 60  # insert all docs
-    db.upload_many(ORGS, db_collection=collection)
+    db.upload_many(ORGS, collection)
     assert collection.count_documents({}) == 60  # no duplicate insertions
 
 
@@ -29,8 +29,8 @@ def test_get_dataset():
     """
     collection = mongomock.MongoClient().db.collection
     assert collection.count_documents({}) == 0  # empty
-    db.upload_many(ORGS, db_collection=collection)
+    db.upload_many(ORGS, collection)
     assert collection.count_documents({}) == 60  # insert all docs
-    dataset = db.get_dataset(db_collection=collection)
+    dataset = db.get_dataset(collection)
     assert dataset is not None
     assert len(dataset) == 60
