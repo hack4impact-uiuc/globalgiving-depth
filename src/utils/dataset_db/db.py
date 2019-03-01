@@ -22,7 +22,7 @@ def get_collection(name) -> pymongo.collection.Collection:
     return db_collection
 
 
-def get_dataset(simple=False, db_collection=get_collection()) -> list:
+def get_dataset(simple=False, db_collection) -> list:
     """
     This method retreives the dataset of NGO records from the mongodb instance.
     Input:
@@ -42,7 +42,7 @@ def get_dataset(simple=False, db_collection=get_collection()) -> list:
     return dataset
 
 
-def upload_many(organizations: list, db_collection=get_collection()):
+def upload_many(organizations: list, db_collection):
     """
     This method provides a way to upload all organizations found through the
     GlobalGiving public API. It avoids uploading duplicate organizations by
