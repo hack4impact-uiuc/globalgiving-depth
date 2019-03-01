@@ -19,7 +19,6 @@ def main():
             project_to_add = {}
             project_to_add["url"] = url
             project_to_add["text"] = text_scraper(url)
-            project_to_add["themes"] = project["themes"]
             scraping_data["projects"].append(project_to_add)
 
     with open(sys.argv[2], "w") as output_file:
