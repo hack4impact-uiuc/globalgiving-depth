@@ -5,7 +5,7 @@ import dotenv
 import pymongo
 
 
-def get_collection() -> pymongo.collection.Collection:
+def get_collection(name) -> pymongo.collection.Collection:
     """
     This is a small method to retreive the uri from the environment and get the
     collection from the database, so we don't have to do it in every single
@@ -18,20 +18,24 @@ def get_collection() -> pymongo.collection.Collection:
 
     # get the collection from the database
     client = pymongo.MongoClient(uri)
-    db_collection = client.ggdb.organizations
+    db_collection = client.ggdb[name]
     return db_collection
 
 
-def get_dataset(simple=False, db_collection=get_collection()) -> list:
+def get_dataset(collection_name, simple=False) -> list:
     """
     This method retreives the dataset of NGO records from the mongodb instance.
     Input:
+        collection_name: the name of the collection for which you are querying
+        the dataset
         simple: we may also retreive simplified records which are only
         `{"name": name, "url":url}`.
     Output:
         dataset: a list containing dictionaries of NGO records
     """
-    dataset = [org for org in db_collection.find()]  # store all orgs in list
+    dataset = [
+        org for org in get_collection(collection_name).find()
+    ]  # store all orgs in list
 
     # pick out only the name and url if we've queried with `simple=True`
     if simple:
@@ -42,7 +46,7 @@ def get_dataset(simple=False, db_collection=get_collection()) -> list:
     return dataset
 
 
-def upload_many(organizations: list, db_collection=get_collection()):
+def upload_many(organizations: list, db_collection):
     """
     This method provides a way to upload all organizations found through the
     GlobalGiving public API. It avoids uploading duplicate organizations by
