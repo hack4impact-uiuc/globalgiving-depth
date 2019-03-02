@@ -22,16 +22,20 @@ def get_collection(name) -> pymongo.collection.Collection:
     return db_collection
 
 
-def get_dataset(db_collection, simple=False) -> list:
+def get_dataset(collection_name, simple=False) -> list:
     """
     This method retreives the dataset of NGO records from the mongodb instance.
     Input:
+        collection_name: the name of the collection for which you are querying
+        the dataset
         simple: we may also retreive simplified records which are only
         `{"name": name, "url":url}`.
     Output:
         dataset: a list containing dictionaries of NGO records
     """
-    dataset = [org for org in db_collection.find()]  # store all orgs in list
+    dataset = [
+        org for org in get_collection(collection_name).find()
+    ]  # store all orgs in list
 
     # pick out only the name and url if we've queried with `simple=True`
     if simple:
