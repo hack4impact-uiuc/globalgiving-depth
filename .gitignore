@@ -25,3 +25,8 @@ Pipfile.lock
 
 # json files
 src/bag-of-words/classifications/correct_classifications.json
+
+# temporary files
+src/bag-of-words/LDA_classifier.py
+src/bag-of-words/LDA_dict_generator.py
+src/bag-of-words/simple_dict_generator.py
