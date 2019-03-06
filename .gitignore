@@ -24,4 +24,4 @@ Pipfile
 Pipfile.lock
 
 # json files
-src/classifier/classifications/correct_classifications.json
+src/bag-of-words/classifications/correct_classifications.json

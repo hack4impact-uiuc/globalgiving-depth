@@ -71,7 +71,7 @@ def generate_dict():
     remove_common_words_from_categories(category_dict)
 
     # dumping data
-    with open("dictionaries/LDA_categories_80.json", "w") as categories_json:
+    with open("dictionaries/categories_dict.json", "w") as categories_json:
         json.dump(category_dict, categories_json, sort_keys=True, indent=2, ensure_ascii=False)
 
 

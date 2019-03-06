@@ -28,4 +28,4 @@ Base comparison without common word cuts: 0.32853 (above)
 > 2 occurrences with ALL organizations: 0.81025
 > 1 occurrences with ALL organizations: 0.83328
 
-> 1 occurrences with 80/20 split: 0.68633
+> 1 occurrences with 80/20 split: 0.68587

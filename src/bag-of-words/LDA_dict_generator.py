@@ -100,8 +100,7 @@ def preprocess_text(text: str):
 
 def get_orgs_from_db():
     dataset = db.get_dataset("organizations_text")
-    with open("test.json", "w") as categories_json:
-        json.dump(dataset, categories_json, sort_keys=True, indent=2, ensure_ascii=False)
+    print(len(dataset))
 
 
 def parse_orgs(org):

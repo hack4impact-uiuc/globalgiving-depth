@@ -8,28 +8,15 @@ import sys
 sys.path.append("..")
 from utils.dataset_db import db
 
-# Heuristic Method to statistically classify organizations
-
-''' Planned outline:
-        1. Create dictionaries of associated words to each category
-        2. Create weighted classification system that weights certain types of words more than others
-            2a. Word repetition will be accounted for by counting each word individually.
-        3. Develop algorithm to classify organizations by words on website, weighted and summed
-        4. Create tests to test classification accuracy
-        5. Randomize algorithm weights (pseudo-machine learning) to test which weights are most effective
-        6. Profit
-'''
 def main():
-    '''
-    '''
     # classifying orgs
-    with open("dictionaries/LDA_categories_80.json") as categories:
+    with open("dictionaries/categories_dict.json") as categories:
         classify_org(json.load(categories))
     print("classification success")
 
     # testing classification accuracy
     with open("classifications/correct_classifications.json") as classifications:
-        with open("classifications/classifications_final.json") as predictions:
+        with open("classifications/bow_classifications.json") as predictions:
             correct = test_classification_accuracy(json.load(predictions), json.load(classifications))
         print("classification accuracy: " + str(correct))
 
@@ -38,22 +25,15 @@ def main():
 
 def classify_org(category_data):
     '''  
-    Classifies organizations based off words
+    Classifies organizations through bag of words implementation
     '''
-    # pseudocode
-    # parse words (through nltk)
-    # initialize category dictionaries of related words, weights of each word type, category counters
-    # create lists for word type (item/supplies, verbs, nouns, pronouns)
-    # scrub data and add words to lists of word type
-    # for each category, calculate sum of word relevance to each category to category counter
-    # return highest category counter
-
     # fetching website data
     websites = db.get_dataset("organizations_text")
     classifications = {}
 
     # tokenizing scraped website data into words
-    for i in range((int) (len(websites) * 0.8), len(websites) - 1):
+    for i in range((int) (len(websites) * 0.8), len(websites)):
+        # fetching and processing text
         website = websites[i]
         if (website.get("text") is None):
             continue
@@ -101,10 +81,11 @@ def classify_org(category_data):
             "theme": classification
         }
 
+        # progress bar for satisfaction
         print(i / len(websites))
 
     # dumping data
-    with open("classifications/classifications_final.json", "w") as classifications_json:
+    with open("classifications/bow_classifications.json", "w") as classifications_json:
         json.dump(classifications, classifications_json, sort_keys=True, indent=2, ensure_ascii=False)    
 
 
