@@ -1,3 +1,7 @@
-# GlobalGiving Depth
+# GlobalGiving Depth [![CircleCI](https://circleci.com/gh/hack4impact-uiuc/globalgiving-depth.svg?style=svg)](https://circleci.com/gh/hack4impact-uiuc/globalgiving-depth)
 
-Gain a depth in insight into NGOs discovered through an automated process.
+## Problem
+
+## Approaches ((Method => Results => Improvements))
+
+## Conclusions
