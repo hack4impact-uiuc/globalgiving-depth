@@ -29,3 +29,11 @@ Base comparison without common word cuts: 0.32853 (above)
 > 1 occurrences with ALL organizations: 0.83328
 
 > 1 occurrences with 80/20 split: 0.68587
+
+<h4> Fourth implementation: Building off of the third implmentation, testing various methods of weighting word scores to further increase accuracy (80/20 splits) <h4>
+
+Accuracy Results:
+Amplifying word scores for scores > 1: 0.687319
+Weighted by type (N: 10, V:2, J: 5): 0.68299
+Weighted by type (N: 20, V:2, J: 2): 0.68155
+Weighted by type (N: 2, V:20, J: 2): 0.66714

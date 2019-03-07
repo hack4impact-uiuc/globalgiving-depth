@@ -3,13 +3,15 @@ import json
 import requests
 from nltk.corpus import stopwords
 
+
 def main():
     print("success")
 
-def generate_dict(): 
-    '''
+
+def generate_dict():
+    """
     Method to generate dictionary of synonyms and related words from api(s)
-    '''
+    """
     # initializing category dictionary
     category_dict = {
         "Education": {},
@@ -17,7 +19,7 @@ def generate_dict():
         "Women and Girls": {},
         "Animals": {},
         "Climate Change": {},
-        "Democracy and Governance": {}, 
+        "Democracy and Governance": {},
         "Disaster Recovery": {},
         "Economic Development": {},
         "Environment": {},
@@ -29,7 +31,7 @@ def generate_dict():
         "Technology": {},
         "Hunger": {},
         "Arts and Culture": {},
-        "LGBTQAI+": {}
+        "LGBTQAI+": {},
     }
 
     # setting up initial api requests for each category
@@ -39,7 +41,7 @@ def generate_dict():
         "Women and Girls": ["women", "girls"],
         "Animals": ["animals"],
         "Climate Change": ["climate+change", "global+warming"],
-        "Democracy and Governance": ["democracy", "government"], 
+        "Democracy and Governance": ["democracy", "government"],
         "Disaster Recovery": ["disaster", "recovery"],
         "Economic Development": ["economy"],
         "Environment": ["environment"],
@@ -51,7 +53,7 @@ def generate_dict():
         "Technology": ["technology"],
         "Hunger": ["hunger", "food"],
         "Arts and Culture": ["arts", "culture"],
-        "LGBTQAI+": ["lesbian", "gay", "transgender", "bisexual", "queer"]
+        "LGBTQAI+": ["lesbian", "gay", "transgender", "bisexual", "queer"],
     }
 
     # initializing stop words to avoid parsing
@@ -63,7 +65,9 @@ def generate_dict():
             r = requests.get("https://api.datamuse.com/words?ml=" + keyword)
             for word in r.json():
                 if word not in stop_words:
-                    category_dict[category][word.get("word")] = parse_content(word, None)
+                    category_dict[category][word.get("word")] = parse_content(
+                        word, None
+                    )
 
     # second iteration of related word searches
     first_word_batch = create_category_word_lists(category_dict)
@@ -77,14 +81,21 @@ def generate_dict():
                     # if word is already present, average the two scores returned
                     if word.get("word") in category_dict[category]:
                         original_word = category_dict[category][word.get("word")]
-                        category_dict[category][word.get("word")] = parse_content(word, original_word)
+                        category_dict[category][word.get("word")] = parse_content(
+                            word, original_word
+                        )
                     else:
-                        category_dict[category][word.get("word")] = parse_content(word, None)
+                        category_dict[category][word.get("word")] = parse_content(
+                            word, None
+                        )
 
     # dumping data
     with open("categories.json", "w") as categories_json:
-        json.dump(category_dict, categories_json, sort_keys=True, indent=2, ensure_ascii=False)
-    
+        json.dump(
+            category_dict, categories_json, sort_keys=True, indent=2, ensure_ascii=False
+        )
+
+
 def parse_content(word, original_word):
     """
     Helper method to parse content and filter relevant data
@@ -93,7 +104,11 @@ def parse_content(word, original_word):
     Return:
         Dictionary of filtered parameters from word json
     """
-    if original_word is not None and word.get("score") is not None and original_word.get("score") is not None:
+    if (
+        original_word is not None
+        and word.get("score") is not None
+        and original_word.get("score") is not None
+    ):
         score = (word.get("score") + original_word.get("score")) / 2
     else:
         score = word.get("score")
@@ -102,17 +117,18 @@ def parse_content(word, original_word):
 
     return {"score": score, "tags": tags}
 
+
 def create_category_word_lists(categories_dict):
-    '''
+    """
     Converts category dictionary into an easily iterable list for efficiency
-    '''
+    """
     category_lists = {
         "Education": [],
         "Children": [],
         "Women and Girls": [],
         "Animals": [],
         "Climate Change": [],
-        "Democracy and Governance": [], 
+        "Democracy and Governance": [],
         "Disaster Recovery": [],
         "Economic Development": [],
         "Environment": [],
@@ -124,25 +140,26 @@ def create_category_word_lists(categories_dict):
         "Technology": [],
         "Hunger": [],
         "Arts and Culture": [],
-        "LGBTQAI+": []
+        "LGBTQAI+": [],
     }
 
     # adding words to lists in categories dict
     for key in categories_dict:
         for word in categories_dict[key]:
             category_lists[key].append(word)
-    
+
     return category_lists
 
 
 def remove_duplicates(categories_dict):
-    '''
+    """
     Removes duplicate words from categories dict
-    '''
+    """
     for category in categories_dict:
         unique_words = set(categories_dict[category].keys())
         print("original: " + str(len(categories_dict[category])))
         print("new: " + str(len(unique_words)))
+
 
 if __name__ == "__main__":
     main()

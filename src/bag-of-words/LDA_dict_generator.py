@@ -6,12 +6,15 @@ import copy
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 import sys
+
 sys.path.append("..")
 from utils.dataset_db import db
+
 
 def main():
     generate_dict()
     print("success")
+
 
 def generate_dict():
     # initializing category dictionary
@@ -21,7 +24,7 @@ def generate_dict():
         "Women and Girls": {},
         "Animals": {},
         "Climate Change": {},
-        "Democracy and Governance": {}, 
+        "Democracy and Governance": {},
         "Disaster Recovery": {},
         "Economic Development": {},
         "Environment": {},
@@ -33,7 +36,7 @@ def generate_dict():
         "Technology": {},
         "Hunger": {},
         "Arts and Culture": {},
-        "LGBTQAI+": {}
+        "LGBTQAI+": {},
     }
 
     # opening scraped website data
@@ -46,7 +49,7 @@ def generate_dict():
     for i in range(len(websites)):
         # grabbing and processing text
         website = websites[i]
-        if (website.get("text") is None):
+        if website.get("text") is None:
             continue
 
         text = preprocess_text(website.get("text"))
@@ -63,7 +66,7 @@ def generate_dict():
                     except:
                         category_dict[theme["name"]][word] = {
                             "tags": temp_dict[word],
-                            "freq": 1
+                            "freq": 1,
                         }
         print(i / len(websites))
 
@@ -72,7 +75,10 @@ def generate_dict():
 
     # dumping data
     with open("dictionaries/test.json", "w") as categories_json:
-        json.dump(category_dict, categories_json, sort_keys=True, indent=2, ensure_ascii=False)
+        json.dump(
+            category_dict, categories_json, sort_keys=True, indent=2, ensure_ascii=False
+        )
+
 
 def stem_word(text: str):
     wnl = WordNetLemmatizer()
@@ -98,6 +104,7 @@ def preprocess_text(text: str):
 
     return processed_text
 
+
 def get_orgs_from_db():
     dataset = db.get_dataset("organizations_text")
     print(len(dataset))
@@ -116,20 +123,22 @@ def reformat_orgs():
         reformatted_orgs[org.get("name")] = parse_orgs(org)
 
     with open("reformatted_orgs.json", "w") as r_orgs_json:
-        json.dump(reformatted_orgs, r_orgs_json, sort_keys=True, indent=2, ensure_ascii=False)    
+        json.dump(
+            reformatted_orgs, r_orgs_json, sort_keys=True, indent=2, ensure_ascii=False
+        )
 
 
 def create_category_word_lists(categories_dict):
-    '''
+    """
     Converts category dictionary into an easily iterable list for efficiency
-    '''
+    """
     category_lists = {
         "Education": [],
         "Children": [],
         "Women and Girls": [],
         "Animals": [],
         "Climate Change": [],
-        "Democracy and Governance": [], 
+        "Democracy and Governance": [],
         "Disaster Recovery": [],
         "Economic Development": [],
         "Environment": [],
@@ -141,14 +150,14 @@ def create_category_word_lists(categories_dict):
         "Technology": [],
         "Hunger": [],
         "Arts and Culture": [],
-        "LGBTQAI+": []
+        "LGBTQAI+": [],
     }
 
     # adding words to lists in categories dict
     for key in categories_dict:
         for word in categories_dict[key]:
             category_lists[key].append(word)
-    
+
     return category_lists
 
 
@@ -170,6 +179,7 @@ def remove_common_words_from_categories(categories):
         if all_words[word] > 1:
             for category in categories:
                 categories[category].pop(word, None)
+
 
 if __name__ == "__main__":
     main()

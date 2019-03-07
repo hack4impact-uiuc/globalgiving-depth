@@ -6,12 +6,15 @@ import copy
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 import sys
+
 sys.path.append("..")
 from utils.dataset_db import db
+
 
 def main():
     generate_dict()
     print("success")
+
 
 def generate_dict():
     # initializing category dictionary
@@ -21,7 +24,7 @@ def generate_dict():
         "Women and Girls": {},
         "Animals": {},
         "Climate Change": {},
-        "Democracy and Governance": {}, 
+        "Democracy and Governance": {},
         "Disaster Recovery": {},
         "Economic Development": {},
         "Environment": {},
@@ -33,7 +36,7 @@ def generate_dict():
         "Technology": {},
         "Hunger": {},
         "Arts and Culture": {},
-        "LGBTQAI+": {}
+        "LGBTQAI+": {},
     }
 
     # opening scraped website data
@@ -43,10 +46,10 @@ def generate_dict():
     d = enchant.Dict("en_US")
 
     # processing words and inserting them into categories dictionary
-    for i in range((int) (len(websites) * 0.8)):
+    for i in range((int)(len(websites) * 0.8)):
         # grabbing and processing text
         website = websites[i]
-        if (website.get("text") is None):
+        if website.get("text") is None:
             continue
 
         text = preprocess_text(website.get("text"))
@@ -63,7 +66,7 @@ def generate_dict():
                     except:
                         category_dict[theme["name"]][word] = {
                             "tags": temp_dict[word],
-                            "freq": 1
+                            "freq": 1,
                         }
         print(i / (len(websites) * 0.8))
 
@@ -72,7 +75,9 @@ def generate_dict():
 
     # dumping data
     with open("dictionaries/categories_dict.json", "w") as categories_json:
-        json.dump(category_dict, categories_json, sort_keys=True, indent=2, ensure_ascii=False)
+        json.dump(
+            category_dict, categories_json, sort_keys=True, indent=2, ensure_ascii=False
+        )
 
 
 def stem_word(text: str):
@@ -118,6 +123,7 @@ def remove_common_words_from_categories(categories):
         if all_words[word] > 1:
             for category in categories:
                 categories[category].pop(word, None)
+
 
 if __name__ == "__main__":
     main()
