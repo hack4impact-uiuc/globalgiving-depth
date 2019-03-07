@@ -37,3 +37,4 @@ Amplifying word scores for scores > 1: 0.687319
 Weighted by type (N: 10, V:2, J: 5): 0.68299
 Weighted by type (N: 20, V:2, J: 2): 0.68155
 Weighted by type (N: 2, V:20, J: 2): 0.66714
+Weighted by type (N: 2, V:2, J: 20): 0.67146
