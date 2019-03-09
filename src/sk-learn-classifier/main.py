@@ -11,6 +11,29 @@ from sklearn.feature_extraction.text import (
 from sklearn.naive_bayes import MultinomialNB, GaussianNB, BernoulliNB
 from sklearn.pipeline import Pipeline, make_pipeline
 from sklearn.linear_model import SGDClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC, LinearSVC
+from sklearn import metrics
+from sklearn.model_selection import GridSearchCV
+
+sys.path.append("..")
+
+from utils.dataset_db import db
+
+from nltk import word_tokenize
+from nltk.stem import WordNetLemmatizer
+
+"""
+Not used in optimal sol'n - also makes it take hours to run
+"""
+
+
+class LemmaTokenizer(object):
+    def __init__(self):
+        self.wnl = WordNetLemmatizer()
+
+    def __call__(self, doc):
+        return [self.wnl.lemmatize(t) for t in word_tokenize(doc)]
 
 
 def get_words(text):
@@ -25,20 +48,19 @@ def get_words(text):
     return " ".join(clean_list)
 
 
-def train():
-    with open(
-        sys.argv[1], "r"
-    ) as input_file:  # training_data.json or ngos_text_113.json
-        input_data = json.load(input_file)
-    print(len(input_data["projects"]))
+"""
+Doesn't actually train, just generates a JSON in the format we want of training data
+"""
 
+
+def train(dataset):
     next_index = 0
     themes = {}  # themes to indices
     targets = []  # indices of themes, parallel to text array
     text = []
     urls = []
 
-    for project in input_data["projects"]:
+    for project in dataset:
         if len(project["text"]) != 0:
             words = get_words(project["text"])
             for theme in project["themes"]:
@@ -54,42 +76,79 @@ def train():
     data["targets"] = targets
     data["urls"] = urls
     data["text"] = text
-    with open(sys.argv[2], "w") as output_file:  # predictions.json
+    with open(sys.argv[1], "w") as output_file:  # trained.json
         json.dump(data, output_file)
 
+    return themes
 
-def classify():
-    with open("predictions.json", "r") as input_file:
+
+"""
+Vectorizes both training and testing data, then classifies
+"""
+
+
+def classify(testing_data, testing_targets):
+    with open(sys.argv[1], "r") as input_file:  # trained.json
         training_data = json.load(input_file)
-    with open(sys.argv[3], "r") as input_file:  # ../visible-text/scraping_data.json
-        testing_data = json.load(input_file)
+
     urls = []
     text = []
-    for project in testing_data["projects"]:
+    targets = []
+    for project in testing_data:
         if len(project["text"]) != 0:
             text.append(get_words(project["text"]))
             urls.append(project["url"])
+            for theme in project["themes"]:
+                if theme["id"] not in training_data["themes"]:
+                    continue
+                targets.append(training_data["themes"][theme["id"]])
 
     text_clf = Pipeline(
         [
-            (
-                "vect",
-                CountVectorizer(ngram_range=(1, 1), stop_words="english", max_df=0.6),
-            ),
+            ("vect", CountVectorizer(ngram_range=(1, 2), max_df=0.6)),
             ("tfidf", TfidfTransformer()),
-            ("clf", SGDClassifier(max_iter=50, random_state=42)),
+            ("clf", SGDClassifier(random_state=42, max_iter=50)),
         ]
     )
+
     test_words = text
     text_clf.fit(training_data["text"], training_data["targets"])
     predicted = text_clf.predict(test_words)
 
+    with open(sys.argv[2], "w") as output_file:  # predictions.json
+        json.dump(
+            predicted.tolist(),
+            output_file,
+            separators=(",", ":"),
+            sort_keys=True,
+            indent=4,
+        )
+
     return predicted
 
 
+def get_targets(data, themes):
+    targets = []
+    for project in data:
+        for theme in project["themes"]:
+            if theme["id"] not in themes:
+                targets.append(-1)
+            targets.append(themes[theme["id"]])
+
+    return targets
+
+
+"""
+args: trained.json predictions.json
+"""
 if __name__ == "__main__":
-    train()
-    predictions = classify()
-    testing_targets = [4, 2, -1, 5, 2]
+    dataset = db.get_dataset("organizations_text")
+    print(len(dataset))
+    train_data, test_data = train_test_split(dataset, test_size=0.2, random_state=42)
+    print(len(train_data), len(test_data))
+    themes = train(train_data)
+    testing_targets = get_targets(test_data, themes)
+    predictions = classify(test_data, testing_targets)
+    print(len(testing_targets))
     print(np.mean(predictions == testing_targets))
-    print(predictions, testing_targets)
+    print(metrics.confusion_matrix(testing_targets, predictions))
