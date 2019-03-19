@@ -2,3 +2,4 @@ requests==2.20.0
 beautifulsoup4==4.7.1
 python-dotenv==0.10.1
 pymongo==3.7.2
+boto==2.49.0
