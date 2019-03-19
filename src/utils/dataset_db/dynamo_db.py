@@ -81,6 +81,23 @@ def get_dataset(table_name):
     return data
 
 
+def put_dataset(table_name, item_list):
+    """
+    This function uploads a list of JSON objects to a table specified by
+    table_name. This is the function that should be used in external modules/
+    algorithms.
+    Input:
+        table_name: string, the name of the table you're uploading to
+        item_list: list of dicts, items you're uploading.
+    Output:
+        item_count: number of items successfully uploaded.
+    """
+    client = db_init()
+    table = get_table(client, table_name)
+    item_count = put_many(table, item_list)
+    return item_count
+
+
 def put_many(table, item_list):
     """
     Method to put a list of JSON items in a table.
