@@ -7,6 +7,38 @@ db_client = None
 tables_by_name = {}
 
 
+def get_dataset(table_name):
+    """
+    This function returns an entire table from a table name. This is the
+    function that should be used in external modules/algorithms.
+    Input:
+        table_name: string, the name of the table you're querying
+    Output:
+        data: list of JSON objects representing the table.
+    """
+    client = db_init()
+    table = get_table(client, table_name)
+    data = get_all_items(table)
+    return data
+
+
+def put_dataset(table_name, item_list):
+    """
+    This function uploads a list of JSON objects to a table specified by
+    table_name. This is the function that should be used in external modules/
+    algorithms.
+    Input:
+        table_name: string, the name of the table you're uploading to
+        item_list: list of dicts, items you're uploading.
+    Output:
+        item_count: number of items successfully uploaded.
+    """
+    client = db_init()
+    table = get_table(client, table_name)
+    item_count = put_many(table, item_list)
+    return item_count
+
+
 def db_init():
     """
     Method to initialize connection to dynamoDB.
@@ -64,38 +96,6 @@ def get_all_items(table):
         response = table.scan(ExclusiveStartKey=response["LastEvaluatedKey"])
         data.extend(response["Items"])
     return data
-
-
-def get_dataset(table_name):
-    """
-    This function returns an entire table from a table name. This is the
-    function that should be used in external modules/algorithms.
-    Input:
-        table_name: string, the name of the table you're querying
-    Output:
-        data: list of JSON objects representing the table.
-    """
-    client = db_init()
-    table = get_table(client, table_name)
-    data = get_all_items(table)
-    return data
-
-
-def put_dataset(table_name, item_list):
-    """
-    This function uploads a list of JSON objects to a table specified by
-    table_name. This is the function that should be used in external modules/
-    algorithms.
-    Input:
-        table_name: string, the name of the table you're uploading to
-        item_list: list of dicts, items you're uploading.
-    Output:
-        item_count: number of items successfully uploaded.
-    """
-    client = db_init()
-    table = get_table(client, table_name)
-    item_count = put_many(table, item_list)
-    return item_count
 
 
 def put_many(table, item_list):
