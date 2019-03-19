@@ -88,7 +88,9 @@ def upload_from_file(filepath: str):
     with open(filepath, "r") as json_file:
         orgs = json.load(json_file)
     # send to upload
-    upload_many(organizations=orgs, db_collection=get_collection("organizations_unlabelled"))
+    upload_many(
+        organizations=orgs, db_collection=get_collection("organizations_unlabelled")
+    )
 
 
 if __name__ == "__main__":
