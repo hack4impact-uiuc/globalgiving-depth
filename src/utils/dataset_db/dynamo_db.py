@@ -29,7 +29,6 @@ def db_init():
 
 
 def get_table(client, table_name):
-    # deprecated!
     '''
     Method to retrieve a table object from a dynamoDB.
     Input:
@@ -53,10 +52,9 @@ def get_all_items(table):
     '''
     Method to retrieve all items from a table.
     Input:
-        table_name: a string representing the name of the table you wish to get
-        layer2_connection: an active connection to a dynamoDB instance
+        table: a table object, the table you wish to get
     Output:
-        table: a boto.dynamodb.table.Table object specified by table_name
+        data: a list of all JSON objects from the table
     '''
     response = table.scan()
     data = response['Items']
@@ -89,7 +87,7 @@ def put_many(table, item_list):
         table: the table object you wish to add to
         item_list: a list of JSON structs containing the items' fields
     Output:
-        boolean: success or fail
+        item_count: number of items uploaded successfully
     '''
     item_count = 0
     for item in item_list:
@@ -125,7 +123,7 @@ def put_item(table, item):
         table_: table object you're adding to
         item: a JSON struct containing the item's fields
     Output:
-        dict: containing metadata
+        new_item: dict containing metadata from request
     '''
     new_item = table.put_item(
         Item=item
