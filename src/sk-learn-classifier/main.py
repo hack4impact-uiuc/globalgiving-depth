@@ -105,9 +105,10 @@ def classify(testing_data, testing_targets):
 
     text_clf = Pipeline(
         [
-            ("vect", CountVectorizer(ngram_range=(1, 2), max_df=0.6)),
+            ("vect", CountVectorizer(ngram_range=(1, 2), max_df=.6)),
             ("tfidf", TfidfTransformer()),
-            ("clf", SGDClassifier(random_state=42, max_iter=50)),
+            # ("clf", SVC(kernel="linear", C=2))
+            ("clf", SGDClassifier(random_state=42, max_iter=50, class_weight={0: .6})),
         ]
     )
 
@@ -150,5 +151,6 @@ if __name__ == "__main__":
     testing_targets = get_targets(test_data, themes)
     predictions = classify(test_data, testing_targets)
     print(len(testing_targets))
+    print(set(testing_targets))
     print(np.mean(predictions == testing_targets))
     print(metrics.confusion_matrix(testing_targets, predictions))
