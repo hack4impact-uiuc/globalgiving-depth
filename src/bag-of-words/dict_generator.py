@@ -17,6 +17,10 @@ def main():
 
 
 def generate_dict():
+    '''
+    Generates a dictionary of relevant words for each category classification 
+    '''
+
     # initializing category dictionary
     category_dict = {
         "Education": {},
@@ -81,6 +85,9 @@ def generate_dict():
 
 
 def stem_word(text: str):
+    '''
+    Stems words
+    '''
     wnl = WordNetLemmatizer()
 
     # Returns input word unchanged if can't be found in WordNet

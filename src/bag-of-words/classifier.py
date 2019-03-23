@@ -70,7 +70,7 @@ def classify_org(category_data):
         for word in text:
             for category in category_data:
                 if category_data[category].get(word) is not None:
-                    category_scores[category] += score_word_by_type(
+                    category_scores[category] += score_word_by_amplified_relevance(
                         category_data[category][word]
                     )
                     # category_data[category][word]["freq"] #score_word_by_type(category_data[category][word])
@@ -101,18 +101,36 @@ def classify_org(category_data):
 
 
 def test_classification_accuracy(predictions, classifications):
+    '''
+    Returns the accuracy of classifications by cross-referencing original GG database classifications
+    '''
     correct = 0
     total = len(predictions)
 
+    # iterating through all classifications and counting number correct
     for prediction in predictions:
         for classification in classifications[prediction]["themes"]:
             if predictions[prediction]["theme"] == classification["name"]:
                 correct += 1
 
+    # returning percentage correct
     return correct / total
 
+def print_results(organization, results):
+    ''' 
+    Helper method to display classification scores of an organization for testing purposes
+    '''
+
+    print(organization)
+    print("Category scores: ")
+    for category in results:
+        print(category + ": " + str(results[category]))
+    print("\n\n")
 
 def stem_word(text: str):
+    '''
+    Stemming words
+    '''
     wnl = WordNetLemmatizer()
 
     # Returns input word unchanged if can't be found in WordNet
@@ -138,6 +156,9 @@ def preprocess_text(text: str):
 
 
 def score_word_by_type(word):
+    '''
+    Returns weighted score of a word based off of it's lexical type
+    '''
     tags = word.get("tags")
     if tags is not None:
         if tags[0] == "N":
@@ -151,11 +172,14 @@ def score_word_by_type(word):
 
 
 def score_word_by_amplified_relevance(word):
+    '''
+    Returns an amplified weighted score of non-unique words
+    '''
     if word.get("freq", 0) > 1:
-        return word.get("freq") * 2
+        return word.get("freq") * 4
     else:
         return 1
-
+        
 
 if __name__ == "__main__":
     main()
