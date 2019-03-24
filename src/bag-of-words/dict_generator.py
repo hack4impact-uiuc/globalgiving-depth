@@ -17,9 +17,9 @@ def main():
 
 
 def generate_dict():
-    '''
+    """
     Generates a dictionary of relevant words for each category classification 
-    '''
+    """
 
     # initializing category dictionary
     category_dict = {
@@ -46,9 +46,6 @@ def generate_dict():
     # opening scraped website data
     websites = db.get_dataset("organizations_text")
 
-    # declaring dict to check if words are english
-    d = enchant.Dict("en_US")
-
     # processing words and inserting them into categories dictionary
     for i in range((int)(len(websites) * 0.8)):
         # grabbing and processing text
@@ -63,15 +60,14 @@ def generate_dict():
         for theme in website["themes"]:
             temp_dict = dict(text)
             for word in temp_dict:
-                if d.check(word):
-                    # counting the frequency of words to be used for scores later
-                    try:
-                        category_dict[theme["name"]][word]["freq"] += 1
-                    except:
-                        category_dict[theme["name"]][word] = {
-                            "tags": temp_dict[word],
-                            "freq": 1,
-                        }
+                # counting the frequency of words to be used for scores later
+                try:
+                    category_dict[theme["name"]][word]["freq"] += 1
+                except:
+                    category_dict[theme["name"]][word] = {
+                        "tags": temp_dict[word],
+                        "freq": 1,
+                    }
         print(i / (len(websites) * 0.8))
 
     print("removing common words...")
@@ -85,9 +81,9 @@ def generate_dict():
 
 
 def stem_word(text: str):
-    '''
+    """
     Stems words
-    '''
+    """
     wnl = WordNetLemmatizer()
 
     # Returns input word unchanged if can't be found in WordNet
@@ -102,9 +98,10 @@ def preprocess_text(text: str):
     """
     processed_text = []
     stop_words = set(stopwords.words("english"))
+    d = enchant.Dict("en_US")  # english words
 
     for token in gensim.utils.simple_preprocess(text):
-        if token not in stop_words and len(token) != 1:
+        if token not in stop_words and d.check(token) and len(token) != 1:
             processed_text.append(stem_word(token))
 
     processed_text = list(set(processed_text))
