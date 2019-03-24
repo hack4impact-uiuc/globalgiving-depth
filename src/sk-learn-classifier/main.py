@@ -9,6 +9,7 @@ from sklearn.feature_extraction.text import (
     TfidfTransformer,
 )
 from sklearn.naive_bayes import MultinomialNB, GaussianNB, BernoulliNB
+from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline, make_pipeline
 from sklearn.linear_model import SGDClassifier
 from sklearn.model_selection import train_test_split
@@ -108,7 +109,11 @@ def classify(testing_data, testing_targets):
             ("vect", CountVectorizer(ngram_range=(1, 2), max_df=0.6)),
             ("tfidf", TfidfTransformer()),
             # ("clf", SVC(kernel="linear", C=2))
-            ("clf", SGDClassifier(random_state=42, max_iter=50, class_weight={0: 0.6})),
+            (
+                "clf",
+                SGDClassifier(random_state=42, max_iter=50, class_weight="balanced"),
+            ),
+            # ("clf", LogisticRegression(n_jobs=1, C=1e5, class_weight="balanced")),
         ]
     )
 
