@@ -3,8 +3,8 @@ import dotenv
 import os
 
 
-db_client = None
-tables_by_name = {}
+Db_client = None
+Tables_by_name = {}
 
 
 def get_dataset(table_name):
@@ -72,11 +72,11 @@ def get_table(client, table_name):
         table: a boto.dynamodb.table.Table object specified by table_name
     """
     assert client is not None
-    table = tables_by_name.get(table_name)
+    table = Tables_by_name.get(table_name)
     if table is None:
         table = client.Table(table_name)
         assert table is not None
-        tables_by_name[table_name] = table
+        Tables_by_name[table_name] = table
 
     return table
 
@@ -146,4 +146,4 @@ def put_item(table, item):
 
 
 if __name__ == "__main__":
-    db_client = db_init()
+    Db_client = db_init()
