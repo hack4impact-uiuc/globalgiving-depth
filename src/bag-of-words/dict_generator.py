@@ -47,7 +47,7 @@ def generate_dict():
     # opening scraped website data
     websites = db.get_dataset("organizations_text")
 
-     # opening scraped website data
+    # opening scraped website data
     with open("classifications/correct_classifications.json") as correct:
         classifications = json.load(correct)
 
@@ -134,6 +134,7 @@ def remove_common_words_from_categories(categories):
             for category in categories:
                 categories[category].pop(word, None)
 
+
 def calculate_idf_scores(categories):
     # creating dictionary of all unique words from categories
     all_words = set()
@@ -150,9 +151,11 @@ def calculate_idf_scores(categories):
     for word in all_words:
         for category in categories:
             for term in categories[category]:
-                if (word == term):
-                    categories[category][term]["idf"] = math.log10((18 / all_words[word]) + 1)
-        
+                if word == term:
+                    categories[category][term]["idf"] = math.log10(
+                        (18 / all_words[word]) + 1
+                    )
+
 
 if __name__ == "__main__":
     main()

@@ -16,11 +16,11 @@ def main():
     """
     # printing category classification count
     with open("classifications/correct_classifications.json") as classifications:
-    #    print_category_classification_count(json.load(classifications))
+        #    print_category_classification_count(json.load(classifications))
         print_confusion_matrix(json.load(classifications))
 
     # printing dictionary word count
-    #with open("dictionaries/categories_dict.json") as dictionaries:
+    # with open("dictionaries/categories_dict.json") as dictionaries:
     #    print_category_dict_count(json.load(dictionaries))
 
     print("success")
@@ -126,7 +126,7 @@ def print_confusion_matrix(classifications):
                 total[row][categories[theme]] += 1
             for theme_2 in themes:
                 count[categories[theme]][categories[theme_2]] += 1
-    
+
     for i in range(18):
         for j in range(18):
             print("{:0.2f}".format(count[i][j] / total[i][j]) + " ", end="")
