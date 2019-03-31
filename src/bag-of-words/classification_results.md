@@ -38,3 +38,7 @@ Weighted by type (N: 10, V:2, J: 5): 0.68299
 Weighted by type (N: 20, V:2, J: 2): 0.68155
 Weighted by type (N: 2, V:20, J: 2): 0.66714
 Weighted by type (N: 2, V:2, J: 20): 0.67146
+
+<h5> Fifth implementation: Reclassification with correctly parsed dictionaries and TF-IDF scoring: dictionaries properly put website words into all themed classification dictionaries. Accuracy is improving!
+
+Accuracy Results: 0.72766

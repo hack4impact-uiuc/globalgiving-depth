@@ -1,5 +1,6 @@
 import json
 import nltk
+import math
 import gensim
 import enchant
 import copy
@@ -46,32 +47,37 @@ def generate_dict():
     # opening scraped website data
     websites = db.get_dataset("organizations_text")
 
-    # processing words and inserting them into categories dictionary
-    for i in range((int)(len(websites) * 0.8)):
-        # grabbing and processing text
-        website = websites[i]
-        if website.get("text") is None:
-            continue
+     # opening scraped website data
+    with open("classifications/correct_classifications.json") as correct:
+        classifications = json.load(correct)
 
-        text = preprocess_text(website.get("text"))
-        text = nltk.pos_tag(text)
+        # processing words and inserting them into categories dictionary
+        for i in range((int)(len(websites) * 0.8)):
+            # grabbing and processing text
+            website = websites[i]
+            if website.get("text") is None:
+                continue
 
-        # putting words into dictionary
-        for theme in website["themes"]:
-            temp_dict = dict(text)
-            for word in temp_dict:
-                # counting the frequency of words to be used for scores later
-                try:
-                    category_dict[theme["name"]][word]["freq"] += 1
-                except:
-                    category_dict[theme["name"]][word] = {
-                        "tags": temp_dict[word],
-                        "freq": 1,
-                    }
-        print(i / (len(websites) * 0.8))
+            text = preprocess_text(website.get("text"))
+            text = nltk.pos_tag(text)
 
-    print("removing common words...")
-    remove_common_words_from_categories(category_dict)
+            # putting words into dictionary
+            for theme in classifications[website["name"]]["themes"]:
+                temp_dict = dict(text)
+                for word in temp_dict:
+                    # counting the frequency of words to be used for scores later
+                    try:
+                        category_dict[theme["name"]][word]["freq"] += 1
+                    except:
+                        category_dict[theme["name"]][word] = {
+                            "tags": temp_dict[word],
+                            "freq": 1,
+                        }
+            print(i / (len(websites) * 0.8))
+
+        # calculating idf scores
+        print("calculating idf scores...")
+        calculate_idf_scores(category_dict)
 
     # dumping data
     with open("dictionaries/categories_dict.json", "w") as categories_json:
@@ -128,6 +134,25 @@ def remove_common_words_from_categories(categories):
             for category in categories:
                 categories[category].pop(word, None)
 
+def calculate_idf_scores(categories):
+    # creating dictionary of all unique words from categories
+    all_words = set()
+    for category in categories:
+        all_words = all_words | set(categories[category].keys())
+
+    all_words = dict.fromkeys(all_words, 0)
+
+    # counting word freq in categories
+    for category in categories:
+        for word in categories[category].keys():
+            all_words[word] += 1
+
+    for word in all_words:
+        for category in categories:
+            for term in categories[category]:
+                if (word == term):
+                    categories[category][term]["idf"] = math.log10((18 / all_words[word]) + 1)
+        
 
 if __name__ == "__main__":
     main()

@@ -2,6 +2,7 @@ import requests
 import json
 import nltk
 import gensim
+import enchant
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 import sys
@@ -12,18 +13,17 @@ from utils.dataset_db import db
 
 def main():
     # classifying orgs
-    """with open("dictionaries/categories_dict.json") as categories:
+    with open("dictionaries/categories_dict.json") as categories:
         classify_org(json.load(categories))
-    print("classification success")"""
+    print("classification success")
 
     # testing classification accuracy
     with open("classifications/correct_classifications.json") as classifications:
         with open("classifications/bow_classifications.json") as predictions:
-            test_category_accuracy(json.load(predictions), json.load(classifications))
-            """correct = test_classification_accuracy(
+            correct = test_classification_accuracy(
                 json.load(predictions), json.load(classifications)
             )
-        print("classification accuracy: " + str(correct))"""
+        print("classification accuracy: " + str(correct))
 
     print("success")
 
@@ -39,11 +39,10 @@ def classify_org(category_data):
     # tokenizing scraped website data into words
     for i in range((int)(len(websites) * 0.8), len(websites)):
         # fetching and processing text
-        website = websites[i]
-        if website.get("text") is None:
+        if websites[i].get("text") is None:
             continue
 
-        text = preprocess_text(website.get("text"))
+        text = preprocess_text(websites[i].get("text"))
 
         # initializing category scores
         category_scores = {
@@ -71,10 +70,7 @@ def classify_org(category_data):
         for word in text:
             for category in category_data:
                 if category_data[category].get(word) is not None:
-                    category_scores[category] += score_word_by_amplified_relevance(
-                        category_data[category][word]
-                    )
-                    # category_data[category][word]["freq"] #score_word_by_type(category_data[category][word])
+                    category_scores[category] += category_data[category][word]["idf"]
 
         # finding max score result
         classification = "Education"
@@ -85,7 +81,7 @@ def classify_org(category_data):
                 classification = category
 
         # storing results
-        classifications[website.get("name")] = {"theme": classification}
+        classifications[websites[i].get("name")] = {"theme": classification}
 
         # progress bar for satisfaction
         print((i - len(websites) * 0.8) / (len(websites) * 0.2))
@@ -190,16 +186,6 @@ def test_category_accuracy(predictions, classifications):
                 else:
                     category_scores[theme["name"]]["total"] -= 1
 
-    for category in category_scores:
-        print(
-            category
-            + ": "
-            + str(
-                category_scores[category]["correct"]
-                / category_scores[category]["total"]
-            )
-        )
-
 
 def print_results(organization, results):
     """ 
@@ -231,9 +217,10 @@ def preprocess_text(text: str):
     """
     processed_text = []
     stop_words = set(stopwords.words("english"))
+    d = enchant.Dict("en_US")  # english words
 
     for token in gensim.utils.simple_preprocess(text):
-        if token not in stop_words and len(token) != 1:
+        if token not in stop_words and d.check(token) and len(token) != 1:
             processed_text.append(stem_word(token))
 
     processed_text = list(set(processed_text))

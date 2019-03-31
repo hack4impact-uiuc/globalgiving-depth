@@ -16,11 +16,12 @@ def main():
     """
     # printing category classification count
     with open("classifications/correct_classifications.json") as classifications:
-        print_category_classification_count(json.load(classifications))
+    #    print_category_classification_count(json.load(classifications))
+        print_confusion_matrix(json.load(classifications))
 
     # printing dictionary word count
-    """with open("dictionaries/categories_dict.json") as dictionaries:
-        print_category_dict_count(json.load(dictionaries))"""
+    #with open("dictionaries/categories_dict.json") as dictionaries:
+    #    print_category_dict_count(json.load(dictionaries))
 
     print("success")
 
@@ -88,6 +89,48 @@ def print_category_dict_count(category_dict):
 
     for category in category_count:
         print(category + ": " + str(category_count[category]))
+
+
+def print_confusion_matrix(classifications):
+    count = [[0 for i in range(18)] for j in range(18)]
+    total = [[0 for i in range(18)] for j in range(18)]
+
+    categories = {
+        "Education": 0,
+        "Children": 1,
+        "Women and Girls": 2,
+        "Animals": 3,
+        "Climate Change": 4,
+        "Democracy and Governance": 5,
+        "Disaster Recovery": 6,
+        "Economic Development": 7,
+        "Environment": 8,
+        "Microfinance": 9,
+        "Health": 10,
+        "Humanitarian Assistance": 11,
+        "Human Rights": 12,
+        "Sport": 13,
+        "Technology": 14,
+        "Hunger": 15,
+        "Arts and Culture": 16,
+        "LGBTQAI+": 17,
+    }
+
+    for org in classifications:
+        themes = []
+        for theme in classifications[org]["themes"]:
+            themes.append(theme["name"])
+
+        for theme in themes:
+            for row in range(18):
+                total[row][categories[theme]] += 1
+            for theme_2 in themes:
+                count[categories[theme]][categories[theme_2]] += 1
+    
+    for i in range(18):
+        for j in range(18):
+            print("{:0.2f}".format(count[i][j] / total[i][j]) + " ", end="")
+        print()
 
 
 def stem_word(text: str):
