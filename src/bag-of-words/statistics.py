@@ -16,8 +16,8 @@ def main():
     """
     # printing category classification count
     with open("classifications/correct_classifications.json") as classifications:
-        #    print_category_classification_count(json.load(classifications))
-        print_confusion_matrix(json.load(classifications))
+        print_intersecting_categories(json.load(classifications))
+        #print_confusion_matrix(json.load(classifications))
 
     # printing dictionary word count
     # with open("dictionaries/categories_dict.json") as dictionaries:
@@ -58,6 +58,72 @@ def print_category_classification_count(classifications):
 
     for category in category_scores:
         print(category + ": " + str(category_scores[category]["total"]))
+
+
+def print_intersecting_categories(classifications):
+    count = [[0 for i in range(18)] for j in range(7)]
+    total = [[0 for i in range(18)] for j in range(7)]
+
+    categories = {
+        "Education": 0,
+        "Children": 1,
+        "Women and Girls": 2,
+        "Animals": 3,
+        "Climate Change": 4,
+        "Democracy and Governance": 5,
+        "Disaster Recovery": 6,
+        "Economic Development": 7,
+        "Environment": 8,
+        "Microfinance": 9,
+        "Health": 10,
+        "Humanitarian Assistance": 11,
+        "Human Rights": 12,
+        "Sport": 13,
+        "Technology": 14,
+        "Hunger": 15,
+        "Arts and Culture": 16,
+        "LGBTQAI+": 17,
+    }
+
+
+    for org in classifications:
+        themes = []
+        for theme in classifications[org]["themes"]:
+            themes.append(theme["name"])
+
+        counter = 0
+        for theme in themes:
+            if (theme in ["Children", "Women and Girls", "Animals"]):
+                counter += 1
+
+        for theme in themes:
+            if (not (theme in ["Children", "Women and Girls", "Animals"])):
+                for i in range(7):
+                    total[i][categories[theme]] += 1
+
+                if (counter == 1):
+                    if ("Children" in themes):
+                        count[0][categories[theme]] += 1
+                    elif("Women and Girls" in themes):
+                        count[1][categories[theme]] += 1
+                    else:
+                        count[2][categories[theme]] += 1
+                elif (counter == 2):
+                    if (set(["Children", "Animals"]).issubset(themes)):
+                        count[3][categories[theme]] += 1
+                    elif (set(["Children", "Women and Girls"]).issubset(themes)):
+                        count[4][categories[theme]] += 1
+                    elif (set(["Women and Girls", "Animals"]).issubset(themes)):
+                        count[5][categories[theme]] += 1
+                elif (counter == 3):
+                    count[6][categories[theme]] += 1
+
+
+    for i in range(7):
+        for j in range(18):
+            if (j < 1 or j > 3):
+                print("{:0.2f}".format(count[i][j] / total[i][j]) + " ", end="")
+        print()
 
 
 def print_category_dict_count(category_dict):
