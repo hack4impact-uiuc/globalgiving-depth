@@ -28,7 +28,7 @@ def main():
     print("success")
 
 
-def classify_org(category_data):
+def classify_org(category_data: dict):
     """  
     Classifies organizations through bag of words implementation
     """
@@ -67,21 +67,33 @@ def classify_org(category_data):
         }
 
         # calculating sum of relevant words in each category
+        total_score = 0
         for word in text:
             for category in category_data:
                 if category_data[category].get(word) is not None:
                     category_scores[category] += category_data[category][word]["idf"]
+                    total_score += category_data[category][word]["idf"]
 
-        # finding max score result
-        classification = "Education"
+        # calculating percentage of relevant words in each category
+        for category in category_scores:
+            category_scores[category] /= total_score
+
+        # finding second max score result
+        classifications = []
         max = category_scores["Education"]
+        max_2 = 0
         for category in category_scores:
             if category_scores[category] > max:
                 max = category_scores[category]
-                classification = category
+            elif category_scores[category] > max_2:
+                max_2 = category_scores[category]
+
+        for category in category_scores:
+            if category_scores[category] >= max_2:
+                classifications.append(category)
 
         # storing results
-        classifications[websites[i].get("name")] = {"theme": classification}
+        classifications[websites[i]["name"]] = {"themes": classifications}
 
         # progress bar for satisfaction
         print((i - len(websites) * 0.8) / (len(websites) * 0.2))
@@ -97,7 +109,7 @@ def classify_org(category_data):
         )
 
 
-def test_classification_accuracy(predictions, classifications):
+def test_classification_accuracy(predictions: dict, classifications: dict):
     """
     Returns the accuracy of classifications by cross-referencing original GG database classifications
     """
@@ -106,15 +118,19 @@ def test_classification_accuracy(predictions, classifications):
 
     # iterating through all classifications and counting number correct
     for prediction in predictions:
+        has_correct = 0
         for theme in classifications[prediction]["themes"]:
-            if predictions[prediction]["theme"] == theme["name"]:
-                correct += 1
+            for p_theme in predictions[prediction]:
+                if predictions[prediction]["themes"][p_theme] == theme["name"]:
+                    has_correct += 1
+        
+        correct += 1 if has_correct > 0 else 0
 
     # returning percentage correct
     return correct / total
 
 
-def test_category_accuracy(predictions, classifications):
+def test_category_accuracy(predictions: dict, classifications: dict):
     """
     Returns the accuracy of classifications within each category
     """
@@ -199,7 +215,7 @@ def test_category_accuracy(predictions, classifications):
                     category_scores[theme["name"]]["total"] -= 1
 
 
-def print_results(organization, results):
+def print_results(organization: dict, results: dict):
     """ 
     Helper method to display classification scores of an organization for testing purposes
     """
@@ -240,7 +256,7 @@ def preprocess_text(text: str):
     return processed_text
 
 
-def score_word_by_type(word):
+def score_word_by_type(word: dict):
     """
     Returns weighted score of a word based off of it's lexical type
     """
@@ -256,7 +272,7 @@ def score_word_by_type(word):
     return 1
 
 
-def score_word_by_amplified_relevance(word):
+def score_word_by_amplified_relevance(word: dict):
     """
     Returns an amplified weighted score of non-unique words
     """
