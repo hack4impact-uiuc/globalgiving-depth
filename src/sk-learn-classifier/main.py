@@ -3,38 +3,17 @@ import json
 import re
 import numpy as np
 
-from sklearn.feature_extraction.text import (
-    TfidfVectorizer,
-    CountVectorizer,
-    TfidfTransformer,
-)
-from sklearn.naive_bayes import MultinomialNB, GaussianNB, BernoulliNB
-from sklearn.linear_model import LogisticRegression
-from sklearn.pipeline import Pipeline, make_pipeline
+from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.multiclass import OneVsRestClassifier
+from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.linear_model import SGDClassifier
 from sklearn.model_selection import train_test_split
-from sklearn.svm import SVC, LinearSVC
 from sklearn import metrics
-from sklearn.model_selection import GridSearchCV
 
 sys.path.append("..")
 
-from utils.dataset_db import db
-
-from nltk import word_tokenize
-from nltk.stem import WordNetLemmatizer
-
-"""
-Not used in optimal sol'n - also makes it take hours to run
-"""
-
-
-class LemmaTokenizer(object):
-    def __init__(self):
-        self.wnl = WordNetLemmatizer()
-
-    def __call__(self, doc):
-        return [self.wnl.lemmatize(t) for t in word_tokenize(doc)]
+from utils.dataset_db import dynamo_db
 
 
 def get_words(text):
@@ -49,28 +28,62 @@ def get_words(text):
     return " ".join(clean_list)
 
 
+def get_targets(data, data_with_targets, themes):
+    targets = []
+    i = 0
+    for project in data:
+        m_themes = project["themes"]
+        for matching_project in data_with_targets:
+            if matching_project["url"] == project["url"]:
+                m_themes = matching_project["themes"]
+                break
+        targets.append([])
+        for theme in m_themes:
+            if theme["id"] not in themes:
+                targets[i].append(-1)
+            targets[i].append(themes[theme["id"]])
+        i += 1
+
+    return targets
+
+
+def get_themes_map():
+    with open(sys.argv[1], "r") as input_file:  # trained.json
+        training_data = json.load(input_file)
+
+    return training_data["themes"]
+
+
 """
-Doesn't actually train, just generates a JSON in the format we want of training data
+Generates a JSON in the format we want of the given training data
 """
 
 
-def train(dataset):
+def set_up_training_data(dataset, matching_dataset):
     next_index = 0
     themes = {}  # themes to indices
     targets = []  # indices of themes, parallel to text array
     text = []
     urls = []
 
+    i = 0
     for project in dataset:
+        m_themes = project["themes"]
+        for matching_project in matching_dataset:
+            if matching_project["url"] == project["url"]:
+                m_themes = matching_project["themes"]
+                break
         if len(project["text"]) != 0:
             words = get_words(project["text"])
-            for theme in project["themes"]:
+            urls.append(project["url"])
+            text.append(words)
+            targets.append([])
+            for theme in m_themes:
                 if theme["id"] not in themes:
                     themes[theme["id"]] = next_index
                     next_index += 1
-                targets.append(themes[theme["id"]])
-                text.append(words)
-                urls.append(project["url"])
+                targets[i].append(themes[theme["id"]])
+        i += 1
 
     data = {}
     data["themes"] = themes
@@ -84,7 +97,9 @@ def train(dataset):
 
 
 """
-Vectorizes both training and testing data, then classifies
+Vectorizes both training and testing data, then classifies.
+Returns tuple of a 2D numpy array of probabilities of each document being each category,
+and a 2D numpy array of 0s and 1s, where 1s are the predicted categories.
 """
 
 
@@ -95,67 +110,62 @@ def classify(testing_data, testing_targets):
     urls = []
     text = []
     targets = []
+    i = 0
     for project in testing_data:
         if len(project["text"]) != 0:
             text.append(get_words(project["text"]))
             urls.append(project["url"])
+            targets.append([])
             for theme in project["themes"]:
                 if theme["id"] not in training_data["themes"]:
                     continue
-                targets.append(training_data["themes"][theme["id"]])
+                targets[i].append(training_data["themes"][theme["id"]])
+        i += 1
 
     text_clf = Pipeline(
         [
             ("vect", CountVectorizer(ngram_range=(1, 2), max_df=0.6)),
             ("tfidf", TfidfTransformer()),
-            # ("clf", SVC(kernel="linear", C=2))
-            (
-                "clf",
-                SGDClassifier(random_state=42, max_iter=50, class_weight="balanced"),
-            ),
-            # ("clf", LogisticRegression(n_jobs=1, C=1e5, class_weight="balanced")),
+            ("clf", OneVsRestClassifier(SGDClassifier(random_state=42, loss="log"))),
         ]
     )
 
+    y = training_data["targets"]
+    y = MultiLabelBinarizer().fit_transform(y)
+
     test_words = text
-    text_clf.fit(training_data["text"], training_data["targets"])
+    text_clf.fit(training_data["text"], y)
+    probabilites = text_clf.predict_proba(test_words)
     predicted = text_clf.predict(test_words)
 
-    with open(sys.argv[2], "w") as output_file:  # predictions.json
-        json.dump(
-            predicted.tolist(),
-            output_file,
-            separators=(",", ":"),
-            sort_keys=True,
-            indent=4,
-        )
-
-    return predicted
-
-
-def get_targets(data, themes):
-    targets = []
-    for project in data:
-        for theme in project["themes"]:
-            if theme["id"] not in themes:
-                targets.append(-1)
-            targets.append(themes[theme["id"]])
-
-    return targets
+    return probabilites, predicted
 
 
 """
 args: trained.json predictions.json
 """
 if __name__ == "__main__":
-    dataset = db.get_dataset("organizations_text")
-    print(len(dataset))
+    dataset = dynamo_db.get_dataset("organizations_text")
     train_data, test_data = train_test_split(dataset, test_size=0.2, random_state=42)
-    print(len(train_data), len(test_data))
-    themes = train(train_data)
-    testing_targets = get_targets(test_data, themes)
-    predictions = classify(test_data, testing_targets)
-    print(len(testing_targets))
-    print(set(testing_targets))
-    print(np.mean(predictions == testing_targets))
-    print(metrics.confusion_matrix(testing_targets, predictions))
+
+    matching_dataset = dynamo_db.get_dataset("organizations")
+    themes = set_up_training_data(train_data, matching_dataset)
+    testing_targets = get_targets(test_data, matching_dataset, themes)
+
+    probabilities, predictions = classify(test_data, testing_targets)
+    with open("predictions.json", "w") as output_file:
+        json.dump(
+            predictions.tolist(),
+            output_file,
+            separators=(",", ":"),
+            sort_keys=True,
+            indent=4,
+        )
+    with open("probabilities.json", "w") as output_file:
+        json.dump(
+            probabilities.tolist(),
+            output_file,
+            separators=(",", ":"),
+            sort_keys=True,
+            indent=4,
+        )
