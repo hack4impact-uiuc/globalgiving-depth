@@ -9,15 +9,15 @@ from nltk.stem import WordNetLemmatizer
 import sys
 
 sys.path.append("..")
-from utils.dataset_db import db
+from utils.dataset_db import dynamo_db
 
 
 def main():
-    generate_dict()
+    generate_dict("dictionaries/categories_dict")
     print("success")
 
 
-def generate_dict():
+def generate_dict(output_file: str):
     """
     Generates a dictionary of relevant words for each category classification 
     """
@@ -45,7 +45,7 @@ def generate_dict():
     }
 
     # opening scraped website data
-    websites = db.get_dataset("organizations_text")
+    websites = dynamo_db.get_dataset("organizations_text")
 
     # opening scraped website data
     with open("classifications/correct_classifications.json") as correct:
@@ -80,7 +80,7 @@ def generate_dict():
         calculate_idf_scores(category_dict)
 
     # dumping data
-    with open("dictionaries/categories_dict.json", "w") as categories_json:
+    with open(output_file + ".json", "w") as categories_json:
         json.dump(
             category_dict, categories_json, sort_keys=True, indent=2, ensure_ascii=False
         )
@@ -113,26 +113,6 @@ def preprocess_text(text: str):
     processed_text = list(set(processed_text))
 
     return processed_text
-
-
-def remove_common_words_from_categories(categories):
-    # creating dictionary of all unique words from categories
-    all_words = set()
-    for category in categories:
-        all_words = all_words | set(categories[category].keys())
-
-    all_words = dict.fromkeys(all_words, 0)
-
-    # counting word freq in categories
-    for category in categories:
-        for word in categories[category].keys():
-            all_words[word] += 1
-
-    # removing words from categories with freq > 1 (non-unique words)
-    for word in all_words:
-        if all_words[word] > 1:
-            for category in categories:
-                categories[category].pop(word, None)
 
 
 def calculate_idf_scores(categories):
