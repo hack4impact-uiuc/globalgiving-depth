@@ -47,10 +47,10 @@ def set_up_training_data(dataset, matching_dataset, outfile_name): #TODO: remove
             text.append(words)
             targets.append([])
             for theme in m_themes:
-                if theme["id"] not in themes:
-                    themes[theme["id"]] = next_index
+                if theme["name"] not in themes:
+                    themes[theme["name"]] = next_index
                     next_index += 1
-                targets[i].append(themes[theme["id"]])
+                targets[i].append(themes[theme["name"]])
         i += 1
 
     data = {}
@@ -124,9 +124,9 @@ class NGOClassifier:
                 urls.append(project["url"])
                 targets.append([])
                 for theme in project["themes"]:
-                    if theme["id"] not in self.training_data["themes"]:
+                    if theme["name"] not in self.training_data["themes"]:
                         continue
-                    targets[i].append(self.training_data["themes"][theme["id"]])
+                    targets[i].append(self.training_data["themes"][theme["name"]])
             i += 1
 
         test_words = text
@@ -178,9 +178,9 @@ class NGOClassifier:
                 m_themes = project["themes"]
                 targets.append([])
                 for theme in m_themes:
-                    if theme["id"] not in self.themes:
+                    if theme["name"] not in self.themes:
                         targets[i].append(-1)
-                    targets[i].append(self.themes[theme["id"]])
+                    targets[i].append(self.themes[theme["name"]])
                 i += 1
             self.testing_targets = targets
 
