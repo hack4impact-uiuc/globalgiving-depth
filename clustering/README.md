@@ -11,3 +11,9 @@ using document embeddings, ....
 ## LDA
 
 something something
+
+## Previous Attempts
+### EM
+something something
+### GuidedLDA
+something something
