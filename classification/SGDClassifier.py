@@ -1,4 +1,3 @@
-import sys
 import json
 import re
 import numpy as np
@@ -9,8 +8,6 @@ from sklearn.pipeline import Pipeline
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.linear_model import SGDClassifier
-from sklearn.model_selection import train_test_split
-from sklearn import metrics
 
 
 def get_words(text):
