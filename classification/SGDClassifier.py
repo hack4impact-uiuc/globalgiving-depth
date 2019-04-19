@@ -12,8 +12,6 @@ from sklearn.linear_model import SGDClassifier
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
 
-#TODO: add sample main.py of how you import this and use it
-
 
 def get_words(text):
     text = text.lower()
@@ -73,19 +71,17 @@ class NGOSGDClassifier:
 
     SGDPipeline = None
 
-    def __init__(self, train_data):  # TODO: write spec for input data, make default file
+    def __init__(
+        self, train_data
+    ):  # TODO: write spec for input data, make default file
         with open(train_data, "r") as input_file:
             self.training_data = json.load(input_file)
             self.themes = self.training_data["themes"]
 
     def save_classifier(self, filename):
-        # save classifier
-        # TODO: Test this
         joblib.dump(self.SGDPipeline, filename)
 
     def load_classifier(self, filename):
-        # load classifier
-        # TODO: Test this
         self.SGDPipeline = joblib.load(filename)
         return self.SGDPipeline
 
@@ -94,13 +90,16 @@ class NGOSGDClassifier:
             [
                 ("vect", CountVectorizer(ngram_range=(1, 2), max_df=0.6)),
                 ("tfidf", TfidfTransformer()),
-                ("clf", OneVsRestClassifier(SGDClassifier(random_state=42, loss="log")))
+                (
+                    "clf",
+                    OneVsRestClassifier(SGDClassifier(random_state=42, loss="log")),
+                ),
             ]
         )
 
         y = self.training_data["targets"]
         y = MultiLabelBinarizer().fit_transform(y)
-        
+
         text_clf.fit(self.training_data["text"], y)
         self.SGDPipeline = text_clf
         return self.SGDPipeline
@@ -134,9 +133,11 @@ class NGOSGDClassifier:
 
     def get_f1_score(self):
         # output mean f1 score by document, then category
+        testing_targets = self.get_testing_targets()
+
         # for every document, calculate the matrix, then f1 score
-        f1_scores = []
-        accuracies = []
+        document_f1_scores = []
+        accuracies = []  # are we still doing this?
         for i in range(len(self.predictions)):
             fp = 0
             fn = 0
@@ -144,27 +145,64 @@ class NGOSGDClassifier:
             tn = 0
             for j in range(len(self.predictions[i])):
                 if self.predictions[i][j] == 1:
-                    if j in self.testing_targets[i]:
+                    if j in testing_targets[i]:
                         tp += 1
                     else:
                         fp += 1
                 else:
-                    if j in self.testing_targets[i]:
+                    if j in testing_targets[i]:
                         fn += 1
                     else:
                         tn += 1
-            precision = 0 if tp+fp == 0 else tp/(tp+fp)
-            recall = 0 if tp+fn == 0 else tp/(tp+fn)
-            f1 = 0 if precision+recall == 0 else 2*(precision*recall)/(precision+recall)
-            f1_scores.append(f1)
-            accuracies.append((tp+tn)/len(self.predictions[i]))
+            precision = 0 if tp + fp == 0 else tp / (tp + fp)
+            recall = 0 if tp + fn == 0 else tp / (tp + fn)
+            f1 = (
+                0
+                if precision + recall == 0
+                else 2 * (precision * recall) / (precision + recall)
+            )
+            document_f1_scores.append(f1)
+            accuracies.append((tp + tn) / len(self.predictions[i]))
 
-        print(np.mean(np.array(f1_scores)))
-        print(f1_scores)
-        print(np.mean(np.array(accuracies)))
-        print(accuracies)
+        category_f1_scores = {}
+        for theme_name, theme_number in self.themes.items():
+            tp = 0
+            tn = 0
+            fp = 0
+            fn = 0
+            for i in range(len(self.predictions)):
+                if (
+                    self.predictions[i][theme_number] == 1
+                    and theme_number in testing_targets[i]
+                ):
+                    tp += 1
+                if (
+                    self.predictions[i][theme_number] == 1
+                    and theme_number not in testing_targets[i]
+                ):
+                    fp += 1
+                if (
+                    self.predictions[i][theme_number] == 0
+                    and theme_number in testing_targets[i]
+                ):
+                    fn += 1
+                if (
+                    self.predictions[i][theme_number] == 0
+                    and theme_number not in testing_targets[i]
+                ):
+                    tn += 1
 
-        # TODO: add f1score by category
+            precision = tp / (tp + fp) if (tp + fp) != 0 else 0
+            recall = tp / (tp + fn) if (tp + fn) != 0 else 0
+            f1 = (
+                2 * ((precision * recall) / (precision + recall))
+                if (precision + recall) != 0
+                else 0
+            )
+
+            category_f1_scores[theme_name] = f1
+
+        return np.mean(np.array(document_f1_scores)), category_f1_scores
 
     def get_testing_targets(self):
         if self.testing_data:
