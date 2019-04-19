@@ -94,8 +94,8 @@ def classify_org(dictionary: dict, text: str):
                 total += category_words.get(word).get("idf")
 
     # calculating percentage of relevant words in each category
-    for i in range(len(scores)):
-        scores[i] /= total if total != 0 else 1
+    #for i in range(len(scores)):
+    #    scores[i] /= total if total != 0 else 1
 
     # finding second max score result
     max = scores[0]
@@ -106,8 +106,8 @@ def classify_org(dictionary: dict, text: str):
         elif score > max_2:
             max_2 = score
 
-    for i in range(len(scores)):
-        scores[i] = 1 if scores[i] >= max_2 else 0
+    #for i in range(len(scores)):
+    #    scores[i] = 1 if scores[i] >= max_2 else 0
         
     # storing results
     return scores

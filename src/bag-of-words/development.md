@@ -16,3 +16,7 @@ Classifier:
 Next Steps:
     - Develop test cases (organizations crawled from past project)
     - Develop more accurate dataset
+
+Things to mention:
+    - Dictionary generator is only english
+    - Change category - index associations

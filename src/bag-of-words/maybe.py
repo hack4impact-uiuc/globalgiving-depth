@@ -1,3 +1,82 @@
+import requests
+import json
+import nltk
+import gensim
+import enchant
+import statistics
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+import sys
+
+sys.path.append("..")
+from utils.dataset_db import dynamo_db
+from utils.dataset_db import db
+
+
+def main():
+    '''with open("dictionaries/trained.json") as inputfile:
+        trained = json.load(inputfile)
+
+        with open("dictionaries/trained.json", "w") as output:
+            json.dump(
+                trained, output, sort_keys=True, indent=2, ensure_ascii=False
+            )'''
+
+
+    websites = dynamo_db.get_dataset("organizations_text")
+    with open("dictionaries/test.json", "w") as output:
+        json.dump(
+            websites, output, sort_keys=True, indent=2, ensure_ascii=False
+        )
+
+
+def avg_category_themes(predictions: dict):
+    totals = []
+
+    for org_name, themes in predictions.items():
+        totals.append(sum(themes))
+
+    print("mean: ", statistics.mean(totals))
+    print("median: ", statistics.median(totals))
+    print("mode: ", statistics.mode(totals))
+    print("stdev: ", statistics.stdev(totals))
+
+def avg_category_themes_corr(classifications: dict):
+    categories = {
+        "Education": 0,
+        "Children": 1,
+        "Women and Girls": 2,
+        "Animals": 3,
+        "Climate Change": 4,
+        "Democracy and Governance": 5,
+        "Disaster Recovery": 6,
+        "Economic Development": 7,
+        "Environment": 8,
+        "Microfinance": 9,
+        "Health": 10,
+        "Humanitarian Assistance": 11,
+        "Human Rights": 12,
+        "Sport": 13,
+        "Technology": 14,
+        "Hunger": 15,
+        "Arts and Culture": 16,
+        "LGBTQAI+": 17,
+    }
+
+    totals = []
+
+    for org in classifications:
+        themes = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        for theme in classifications[org]["themes"]:
+            themes[categories[theme["name"]]] = 1
+
+        totals.append(sum(themes))
+
+    print("mean: ", statistics.mean(totals))
+    print("median: ", statistics.median(totals))
+    print("mode: ", statistics.mode(totals))
+    print("stdev: ", statistics.stdev(totals))
+
 def multi_dict_gen():
     """
     Generates a dictionary of relevant words for each category classification 
@@ -277,3 +356,7 @@ def print_confusion_matrix(classifications):
         for j in range(18):
             print("{:0.2f}".format(count[i][j] / total[i][j]) + " ", end="")
         print()
+
+
+if __name__ == "__main__":
+    main()
