@@ -60,7 +60,7 @@ def set_up_training_data(dataset, outfile_name):
     return themes
 
 
-class NGOClassifier:
+class NGOSGDClassifier:
 
     themes = {}
     training_data = {}
@@ -116,7 +116,7 @@ class NGOClassifier:
         i = 0
         for project in testing_data:
             if len(project["text"]) != 0:
-                text.append(self.get_words(project["text"]))
+                text.append(get_words(project["text"]))
                 urls.append(project["url"])
                 targets.append([])
                 for theme in project["themes"]:
