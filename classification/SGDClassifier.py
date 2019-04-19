@@ -9,6 +9,11 @@ from sklearn.multiclass import OneVsRestClassifier
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.linear_model import SGDClassifier
 
+"""
+Cleans raw text from websites.
+Returns: A string of cleaned text
+"""
+
 
 def get_words(text):
     text = text.lower()
@@ -20,6 +25,13 @@ def get_words(text):
             clean_list.append(word)
 
     return " ".join(clean_list)
+
+
+"""
+Prepares a dataset to be fit to the classifier.
+Params: A dataset of proper format and name of file to output formatted data
+Returns: The map from theme names to assigned theme indices
+"""
 
 
 def set_up_training_data(dataset, outfile_name):
@@ -49,7 +61,7 @@ def set_up_training_data(dataset, outfile_name):
     data["targets"] = targets
     data["urls"] = urls
     data["text"] = text
-    with open(outfile_name, "w") as output_file:  # trained.json
+    with open(outfile_name, "w") as output_file:
         json.dump(data, output_file)
 
     return themes
@@ -82,6 +94,11 @@ class NGOSGDClassifier:
         self.SGDPipeline = joblib.load(filename)
         return self.SGDPipeline
 
+    """
+    Fits the training data to the SGD model.
+    Returns: The pipeline
+    """
+
     def fit(self):
         text_clf = Pipeline(
             [
@@ -100,6 +117,12 @@ class NGOSGDClassifier:
         text_clf.fit(self.training_data["text"], y)
         self.SGDPipeline = text_clf
         return self.SGDPipeline
+
+    """
+    Predicts the what categories should be assigned to the testing data.
+    Params: The testing data of proper format
+    Returns: A 2D array of each document's probability of being classified a certain category and a 2D array of each document's predicted categories
+    """
 
     def predict(self, testing_data):
         assert self.SGDPipeline
