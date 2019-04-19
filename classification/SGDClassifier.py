@@ -27,7 +27,7 @@ def get_words(text):
     return " ".join(clean_list)
 
 
-def set_up_training_data(dataset, matching_dataset, outfile_name): #TODO: remove matching dataset
+def set_up_training_data(dataset, outfile_name):
     next_index = 0
     themes = {}  # themes to indices
     targets = []  # indices of themes, parallel to text array
@@ -37,10 +37,6 @@ def set_up_training_data(dataset, matching_dataset, outfile_name): #TODO: remove
     i = 0
     for project in dataset:
         m_themes = project["themes"]
-        for matching_project in matching_dataset:
-            if matching_project["url"] == project["url"]:
-                m_themes = matching_project["themes"]
-                break
         if len(project["text"]) != 0:
             words = get_words(project["text"])
             urls.append(project["url"])
@@ -124,9 +120,9 @@ class NGOClassifier:
                 urls.append(project["url"])
                 targets.append([])
                 for theme in project["themes"]:
-                    if theme["name"] not in self.training_data["themes"]:
+                    if theme["name"] not in self.themes:
                         continue
-                    targets[i].append(self.training_data["themes"][theme["name"]])
+                    targets[i].append(self.themes[theme["name"]])
             i += 1
 
         test_words = text
@@ -170,7 +166,7 @@ class NGOClassifier:
 
         # TODO: add f1score by category
 
-    def __get_targets(self):  #private
+    def get_testing_targets(self):
         if self.testing_data:
             targets = []
             i = 0
@@ -185,3 +181,6 @@ class NGOClassifier:
             self.testing_targets = targets
 
         return self.testing_targets
+
+    def get_target_map(self):
+        return self.themes
