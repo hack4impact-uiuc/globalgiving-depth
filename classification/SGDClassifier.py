@@ -67,6 +67,12 @@ def set_up_training_data(dataset, outfile_name):
     return themes
 
 
+"""
+Can assign multiple labels to input data using tf-idf scoring andff the OneVsRest and SGD Classifier.
+Params: The filename of the training data of proper format
+"""
+
+
 class NGOSGDClassifier:
 
     themes = {}
@@ -151,9 +157,15 @@ class NGOSGDClassifier:
 
         return self.probabilities, self.predictions
 
+    """
+    This function only works if the data to be predicted has already known categories associated with it.
+    Returns:  The mean f1 score over all predicted documents and a dictionary of category names to f1 scores
+    """
+
     def get_f1_score(self):
         # output mean f1 score by document, then category
         testing_targets = self.get_testing_targets()
+        assert testing_targets
 
         # for every document, calculate the matrix, then f1 score
         document_f1_scores = []
@@ -224,6 +236,10 @@ class NGOSGDClassifier:
 
         return np.mean(np.array(document_f1_scores)), category_f1_scores
 
+    """
+    Returns:  The actual categories for each document to predict.
+    """
+
     def get_testing_targets(self):
         if self.testing_data:
             targets = []
@@ -239,6 +255,10 @@ class NGOSGDClassifier:
             self.testing_targets = targets
 
         return self.testing_targets
+
+    """
+    Returns:  The mapping of theme names to indices
+    """
 
     def get_target_map(self):
         return self.themes
