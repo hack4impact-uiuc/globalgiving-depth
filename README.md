@@ -11,10 +11,3 @@
 ## Credits
 
 ## License (?)
-
------ old stuff, should go in wiki -----
-## Problem
-
-## Approaches ((Method => Results => Improvements))
-
-## Conclusions
