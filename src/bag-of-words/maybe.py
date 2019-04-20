@@ -358,5 +358,57 @@ def print_confusion_matrix(classifications):
         print()
 
 
+    def train(self, dataset):
+        themes = {
+            "Animals": 11,
+            "Arts and Culture": 14,
+            "Children": 6,
+            "Climate Change": 5,
+            "Democracy and Governance": 15,
+            "Disaster Recovery": 12,
+            "Economic Development": 0,
+            "Education": 1,
+            "Environment": 7,
+            "Microfinance": 2,
+            "Women and Girls": 3,
+            "Health": 8,
+            "Humanitarian Assistance": 9,
+            "Hunger": 16,
+            "LGBTQAI+": 17,
+            "Human Rights": 4,
+            "Sport": 13,
+            "Technology": 10
+        }  # themes to indices
+        targets = []  # indices of themes, parallel to text array
+        text = []
+        urls = []
+
+        for project in dataset:
+            if len(project["text"]) != 0:
+                text.append(project["text"])
+                urls.append(project["url"])
+                temp_themes = []
+                for theme in project["themes"]:
+                    temp_themes.append(themes[theme["name"]])
+                targets.append(temp_themes)
+
+        data = {}
+        data["themes"] = themes
+        data["targets"] = targets
+        data["urls"] = urls
+        data["text"] = text
+
+        with open("trained.json", "w") as output_file:  # trained.json
+            json.dump(
+                data,
+                output_file,
+                sort_keys=True,
+                indent=2,
+                ensure_ascii=False,
+            )
+
+        return themes
+        
+
 if __name__ == "__main__":
     main()
