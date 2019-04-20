@@ -3,7 +3,7 @@ import json
 from collections import Counter
 
 # Make sure to Install NLTK, download stopwords, Gensim, lang_detect, etc.
-# TODO: Explain the above, move to READ_ME
+# TODO: Explain above, move to READ_ME
 
 import nltk
 import gensim
