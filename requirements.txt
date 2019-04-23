@@ -1,0 +1,5 @@
+spacy==2.0.12
+numpy==1.14.3
+gensim==3.4.0
+matplotlib==2.2.2
+scikit_learn==0.20.3

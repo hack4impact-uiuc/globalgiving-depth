@@ -13,7 +13,6 @@ jobs:
       - checkout # get commit to test from repo
       - run:
           command: |
-            cd src
             pip install -r requirements.txt --user
             pip install black --user
             /home/circleci/.local/bin/black . --check
