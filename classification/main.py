@@ -2,6 +2,7 @@ import json
 
 from SGDClassifier import NGOSGDClassifier
 
+# testing and training both from memory
 if __name__ == "__main__":
     with open("testing.json", "r") as testing_file:
         testing_data = json.load(testing_file)
@@ -9,7 +10,7 @@ if __name__ == "__main__":
     # Create the classifier from the sample training.json
     classifier = NGOSGDClassifier("training.json")
     classifier.fit()
-    # Save the classifier to be used to later so we don't need to fit every time
+    # Save the classifier to be used for later so we don't need to fit every time
     classifier.save_classifier("SGDClassifier.joblib")
 
     classifier2 = NGOSGDClassifier("training.json")
@@ -19,6 +20,6 @@ if __name__ == "__main__":
     print(probabilities)
     print(predictions)
 
-    f1_scores = classifier2.get_f1_score()
-    print(f1_scores[0])
-    print(f1_scores[1])
+    mean_document_f1_score, category_f1_scores = classifier2.get_f1_score()
+    print(mean_document_f1_score)
+    print(category_f1_scores)
