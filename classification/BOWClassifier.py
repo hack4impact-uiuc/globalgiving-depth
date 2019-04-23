@@ -1,65 +1,50 @@
 import json
+import copy
 import numpy as np
-import sys
-
-sys.path.append("..")
-from utils.dataset_db import dynamo_db
-
-
-def main():
-    bow = BOWClassifier("trained.json", "categories_dict.json")
-    bow.predict_set(dynamo_db.get_dataset("organizations_text"))
-    bow.save_predictions("predictions.json")
-    bow.load_predictions("predictions.json")
-    bow.load_targets(json.load(open("trained.json")))
-    print(bow.get_f1_score())
 
 
 class BOWClassifier:
+    # internal necessities
     themes = {}
     training_data = {}
     dictionary = None
 
     predictions = None
 
+    # testing datasets
     testing_data = None
     testing_targets = None
 
-    """
-    Initializes bag of words classifier object
-    
-    :param str train_data: training data filename
-    :param str dict_data: dictionary of category words filename
-    """
+    def __init__(self, train_data: dict, dict_data: dict):
+        """
+        Initializes bag of words classifier object
+        
+        :param dict train_data: training data 
+        :param dict dict_data: dictionary of category words
+        """
+        self.training_data = train_data
+        self.themes = self.training_data["themes"]
+        self.dictionary = dict_data
 
-    def __init__(self, train_data: str, dict_data: str):
-        with open(train_data, "r") as input_file:
-            self.training_data = json.load(input_file)
-            self.themes = self.training_data["themes"]
+        # ensuring dictionary is correctly structured
+        for theme in self.themes:
+            assert self.dictionary.get(
+                theme
+            ), "dictionary does not contain proper theme keys."
 
-        with open(dict_data, "r") as input_dict:
-            self.dictionary = json.load(input_dict)
-
-            # ensuring dictionary is correctly structured
-            for theme in self.themes:
-                assert self.dictionary.get(
-                    theme
-                ), "dictionary does not contain proper theme keys."
-
-            theme = next(iter(self.themes))
-            word = next(iter(self.dictionary[theme]))
-            assert (
-                self.dictionary.get(theme).get(word).get("idf")
-            ), "dictionary does not contain tf-idf score"
-
-    """
-    Predicts a set of organizations
-
-    :param dict testing_data: the testing dataset to be predicted
-    :return: list of predicted scores
-    """
+        theme = next(iter(self.themes))
+        word = next(iter(self.dictionary[theme]))
+        assert (
+            self.dictionary.get(theme).get(word).get("tf-idf")
+        ), "dictionary does not contain tf-idf score"
 
     def predict_set(self, testing_data: dict):
+        """
+        Predicts a set of organizations
+
+        :param dict testing_data: the testing dataset to be predicted
+        :return: list of predicted scores
+        """
         assert self.dictionary
         self.predictions = []
 
@@ -70,13 +55,12 @@ class BOWClassifier:
 
         return self.predictions
 
-    """
-    Stores predictions made by the bag of words model
-
-    :param str output_file: json file name for predictions to be stored in
-    """
-
     def save_predictions(self, output_file: str):
+        """
+        Stores predictions made by the bag of words model
+
+        :param str output_file: json file name for predictions to be stored in
+        """
         assert self.predictions, "predictions have not been made yet"
 
         with open(output_file, "w") as predictions_json:
@@ -88,24 +72,21 @@ class BOWClassifier:
                 ensure_ascii=False,
             )
 
-    """
-    Load predictions from file
+    def load_predictions(self, predictions: dict):
+        """
+        Load predictions from file
 
-    :param str filename: json file of predictions to be imported from
-    """
-
-    def load_predictions(self, filename: str):
-        with open(filename) as input_file:
-            self.predictions = json.load(input_file)
-
-    """
-    Predicts an organizations themes based off text
-
-    :param str text: text from the organization
-    :return: list of predictions
-    """
+        :param dict predictions: dict of predictions
+        """
+        self.predictions = predictions
 
     def predict_org(self, text: str):
+        """
+        Predicts an organizations themes based off text
+
+        :param str text: text from the organization
+        :return: list of predictions
+        """
         # list to store scores
         scores = [0] * 18
 
@@ -114,30 +95,27 @@ class BOWClassifier:
         for word in text:
             for category, category_words in self.dictionary.items():
                 if category_words.get(word) is not None:
-                    scores[self.themes[category]] += category_words.get(word).get("tf-idf")
+                    scores[self.themes[category]] += category_words.get(word).get(
+                        "tf-idf"
+                    )
                     total += category_words.get(word).get("tf-idf")
 
         # finding second highest category score
-        max = scores[0]
-        max_2 = 0
-        for score in scores:
-            if score > max:
-                max = score
-            elif score > max_2:
-                max_2 = score
+        temp = copy.deepcopy(scores)
+        temp.sort()
+        threshold = temp[-2]
 
         # predicting all themes of second highest score and above
         for i in range(len(scores)):
-            scores[i] = 1 if scores[i] >= max_2 else 0
+            scores[i] = 1 if scores[i] >= threshold else 0
 
         # returning results
         return scores
 
-    """
-    Returns the f1 score for the predictions by organization then category
-    """
-
     def get_f1_score(self):
+        """
+        Returns the f1 score for the predictions by organization and category
+        """
         # output mean f1 score by document, then category
         assert self.testing_targets, "targets not loaded"
         testing_targets = self.testing_targets
@@ -211,16 +189,11 @@ class BOWClassifier:
 
         return np.mean(np.array(org_f1_scores)), category_f1_scores
 
-    """
-    Load the testing targets for testing dataset
-
-    :param dict target_data: dictionary containing target data for testing dataset
-    """
-
     def load_targets(self, target_data: dict):
-        assert target_data.get("targets")
+        """
+        Load the testing targets for testing dataset
+
+        :param dict target_data: dictionary containing target data for testing dataset
+        """
+        assert target_data.get("targets"), "targets parameter needed in dictionary"
         self.testing_targets = target_data["targets"]
-
-
-if __name__ == "__main__":
-    main()
