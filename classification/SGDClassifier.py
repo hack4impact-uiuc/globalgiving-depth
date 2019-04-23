@@ -73,18 +73,15 @@ def set_up_training_data(dataset, outfile_name):
     return themes
 
 
-# TODO: list each method
-
-
 class NGOSGDClassifier:
     """
     Can assign multiple labels to input data using tf-idf scoring and the OneVsRest and SGD Classifier.
 
     Methods:
-    __init__(self, train_data)
+    __init__(self)
     save_classifier(self, filename)
     load_classifier(self, filename)
-    fit(self)
+    fit(self, training_data)
     predict(self, testing_data)
     get_f1_scores(self)
     get_testing_targets(self)
@@ -101,16 +98,9 @@ class NGOSGDClassifier:
     testing_targets = None # The actual themes of the testing data
 
     SGDPipeline = None
-    # TODO: get rid of train_data, put in fit
-    def __init__(self, train_data):
-        """
-        Keyword arguments:
-        train_data -- The filename of the training data of proper format
-        """
-
-        with open(train_data, "r") as input_file:
-            self.training_data = json.load(input_file)
-            self.themes = self.training_data["themes"]
+    
+    def __init__(self):
+        pass
 
     def save_classifier(self, filename):
         """
@@ -131,11 +121,16 @@ class NGOSGDClassifier:
         self.SGDPipeline = joblib.load(filename)
         return self.SGDPipeline
 
-    def fit(self):
+    def fit(self, training_data):
         """
         Fits the training data to the SGD model.
+
+        Keyword arguments:
+        training_data -- Data to train the model off of in the proper format
         Returns: The pipeline
         """
+        self.training_data = set_up_training_data(training_data)
+        self.themes = self.training_data["themes"]
 
         text_clf = Pipeline(
             [
