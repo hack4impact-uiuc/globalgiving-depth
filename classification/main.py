@@ -20,6 +20,6 @@ if __name__ == "__main__":
     print(probabilities)
     print(predictions)
 
-    mean_document_f1_score, category_f1_scores = classifier2.get_f1_score()
+    mean_document_f1_score, category_f1_scores = classifier2.get_f1_scores()
     print(mean_document_f1_score)
     print(category_f1_scores)

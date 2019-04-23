@@ -34,6 +34,7 @@ def get_words(text):
 def set_up_training_data(dataset, outfile_name):
     """
     Prepares a dataset to be fit to the classifier.
+
     Keyword arguments:
     dataset -- A dataset of proper format
     outfile_name -- The name of the file to output formatted data
@@ -78,6 +79,16 @@ def set_up_training_data(dataset, outfile_name):
 class NGOSGDClassifier:
     """
     Can assign multiple labels to input data using tf-idf scoring and the OneVsRest and SGD Classifier.
+
+    Methods:
+    __init__(self, train_data)
+    save_classifier(self, filename)
+    load_classifier(self, filename)
+    fit(self)
+    predict(self, testing_data)
+    get_f1_scores(self)
+    get_testing_targets(self)
+    get_target_map(self)
     """
 
     themes = {} # The map from theme names to assigned index
@@ -147,7 +158,7 @@ class NGOSGDClassifier:
     def predict(self, testing_data):
         """
         Predicts what categories should be assigned to the testing data.
-        
+
         Keyword arguments:
         testing_data -- The testing data of proper format
         Returns: A 2D array of each document's probability of being classified a certain category and a 2D array of each document's predicted categories
@@ -179,7 +190,7 @@ class NGOSGDClassifier:
 
         return self.probabilities, self.predictions
 
-    def get_f1_score(self):
+    def get_f1_scores(self):
         """
         This function only works if the data to be predicted has already known categories associated with it.
         Returns:  The mean f1 score over all predicted documents and a dictionary of category names to f1 scores
