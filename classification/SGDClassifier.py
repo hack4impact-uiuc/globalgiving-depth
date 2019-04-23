@@ -9,13 +9,17 @@ from sklearn.multiclass import OneVsRestClassifier
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.linear_model import SGDClassifier
 
-"""
-Cleans raw text from websites.
-Returns: A string of cleaned text
-"""
-
 
 def get_words(text):
+    """
+    Cleans raw text from websites.
+
+    Keyword arguments:
+    text -- A string of text to clean
+
+    Returns: A string of cleaned text
+    """
+
     text = text.lower()
     wordlist = text.split()
     clean_list = []
@@ -27,14 +31,15 @@ def get_words(text):
     return " ".join(clean_list)
 
 
-"""
-Prepares a dataset to be fit to the classifier.
-Params: A dataset of proper format and name of file to output formatted data
-Returns: The map from theme names to assigned theme indices
-"""
-
-
 def set_up_training_data(dataset, outfile_name):
+    """
+    Prepares a dataset to be fit to the classifier.
+    Keyword arguments:
+    dataset -- A dataset of proper format
+    outfile_name -- The name of the file to output formatted data
+    Returns: The map from theme names to assigned theme indices
+    """
+
     next_index = 0
     themes = {}  # themes to indices
     targets = []  # indices of themes, parallel to text array
@@ -67,45 +72,60 @@ def set_up_training_data(dataset, outfile_name):
     return themes
 
 
-"""
-Can assign multiple labels to input data using tf-idf scoring andff the OneVsRest and SGD Classifier.
-Params: The filename of the training data of proper format
-"""
+# TODO: list each method
 
 
 class NGOSGDClassifier:
+    """
+    Can assign multiple labels to input data using tf-idf scoring and the OneVsRest and SGD Classifier.
+    """
 
-    themes = {}
-    training_data = {}
+    themes = {} # The map from theme names to assigned index
+    training_data = {} # JSON object of training data
 
-    probabilities = None
-    predictions = None
+    probabilities = None # 2D numpy array of probabilites of each theme for each document
+    predictions = None # 2D binary numpy array of predicted themes for each document
 
-    testing_data = None
-    testing_targets = None
+    testing_data = None # The data to test
+    testing_targets = None # The actual themes of the testing data
 
     SGDPipeline = None
+    # TODO: get rid of train_data, put in fit
+    def __init__(self, train_data):
+        """
+        Keyword arguments:
+        train_data -- The filename of the training data of proper format
+        """
 
-    def __init__(
-        self, train_data
-    ):  # TODO: write spec for input data, make default file
         with open(train_data, "r") as input_file:
             self.training_data = json.load(input_file)
             self.themes = self.training_data["themes"]
 
     def save_classifier(self, filename):
+        """
+        Saves the classifier.
+
+        Keyword arguments:
+        filename -- The name of the file to save to (ex. SGDClassifier.joblib)
+        """
         joblib.dump(self.SGDPipeline, filename)
 
     def load_classifier(self, filename):
+        """
+        Loads the classifier.
+
+        Keyword arguments:
+        filename -- The name of the file to save to (ex. SGDClassifier.joblib)
+        """
         self.SGDPipeline = joblib.load(filename)
         return self.SGDPipeline
 
-    """
-    Fits the training data to the SGD model.
-    Returns: The pipeline
-    """
-
     def fit(self):
+        """
+        Fits the training data to the SGD model.
+        Returns: The pipeline
+        """
+
         text_clf = Pipeline(
             [
                 ("vect", CountVectorizer(ngram_range=(1, 2), max_df=0.6)),
@@ -124,13 +144,15 @@ class NGOSGDClassifier:
         self.SGDPipeline = text_clf
         return self.SGDPipeline
 
-    """
-    Predicts the what categories should be assigned to the testing data.
-    Params: The testing data of proper format
-    Returns: A 2D array of each document's probability of being classified a certain category and a 2D array of each document's predicted categories
-    """
-
     def predict(self, testing_data):
+        """
+        Predicts what categories should be assigned to the testing data.
+        
+        Keyword arguments:
+        testing_data -- The testing data of proper format
+        Returns: A 2D array of each document's probability of being classified a certain category and a 2D array of each document's predicted categories
+        """
+
         assert self.SGDPipeline
 
         self.testing_data = testing_data
@@ -157,19 +179,19 @@ class NGOSGDClassifier:
 
         return self.probabilities, self.predictions
 
-    """
-    This function only works if the data to be predicted has already known categories associated with it.
-    Returns:  The mean f1 score over all predicted documents and a dictionary of category names to f1 scores
-    """
-
     def get_f1_score(self):
+        """
+        This function only works if the data to be predicted has already known categories associated with it.
+        Returns:  The mean f1 score over all predicted documents and a dictionary of category names to f1 scores
+        """
+
         # output mean f1 score by document, then category
         testing_targets = self.get_testing_targets()
         assert testing_targets
 
         # for every document, calculate the matrix, then f1 score
         document_f1_scores = []
-        accuracies = []  # are we still doing this?
+        accuracies = []  # TODO: output accuracy
         for i in range(len(self.predictions)):
             fp = 0
             fn = 0
@@ -186,8 +208,8 @@ class NGOSGDClassifier:
                         fn += 1
                     else:
                         tn += 1
-            precision = 0 if tp + fp == 0 else tp / (tp + fp)
-            recall = 0 if tp + fn == 0 else tp / (tp + fn)
+            precision = 0 if (tp + fp) == 0 else tp / (tp + fp)
+            recall = 0 if (tp + fn) == 0 else tp / (tp + fn)
             f1 = (
                 0
                 if precision + recall == 0
@@ -236,11 +258,11 @@ class NGOSGDClassifier:
 
         return np.mean(np.array(document_f1_scores)), category_f1_scores
 
-    """
-    Returns:  The actual categories for each document to predict.
-    """
-
     def get_testing_targets(self):
+        """
+        Returns:  The actual categories for each document to predict.
+        """
+
         if self.testing_data:
             targets = []
             i = 0
@@ -256,9 +278,9 @@ class NGOSGDClassifier:
 
         return self.testing_targets
 
-    """
-    Returns:  The mapping of theme names to indices
-    """
-
     def get_target_map(self):
+        """
+        Returns:  The mapping of theme names to indices
+        """
+
         return self.themes
