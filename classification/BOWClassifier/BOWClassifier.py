@@ -191,7 +191,7 @@ class BOWClassifier:
 
     def load_targets(self, target_data: dict):
         """
-        Load the testing targets for testing dataset
+        Load the testing targets (correct classifications) for testing dataset
 
         :param dict target_data: dictionary containing target data for testing dataset
         """
