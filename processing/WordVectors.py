@@ -1,19 +1,21 @@
 import json
 import random
 import re
-import sys
 
 import matplotlib.pyplot as plt
 import numpy
 import spacy
-from gensim.parsing.preprocessing import preprocess_string, remove_stopwords
+from gensim.parsing.preprocessing import remove_stopwords
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
 
 def get_words(text):
     """
-    Source: <@FIXME:/somewhere/>
+    Input:
+        text: a string of text which needs to be processed
+    Output:
+        string of all words extracted from the input string
     """
     text = text.lower()
     wordlist = text.split()
@@ -27,11 +29,10 @@ def get_words(text):
 
 class WordVectors:
     """
-    @FIXME: class to represent word vectors. more stuff here
+    Represent documents as word vectors
     """
 
     dataset = []  # list of dictionaries with "summary" and "_id" fields
-    # @FIXME: or perhaps we ask for a more general input format?
     samples = 500  # just used for visualization; we don't want to dump all points
     # onto the plot, as they will overlap and overwhelm
 
@@ -41,7 +42,7 @@ class WordVectors:
     X = None
     explained_variance = None
 
-    def __init__(self, data_file: string, samples: int):
+    def __init__(self, data_file: str, samples=500):
         """
         Construct WordVectors object and read in the dataset.
         data_file: string of path to data file
@@ -60,7 +61,7 @@ class WordVectors:
 
     def get_word_vectors(self):
         """
-        Creates naive document vectors by summing all word 
+        Creates naive document vectors by summing all word
         vectors for each document and normalizes them.
         Returns a list of naive document vectors.
         """
