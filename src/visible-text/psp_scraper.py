@@ -10,21 +10,19 @@ def main():
     with open(sys.argv[1], "r") as input_file:
         input_data = json.load(input_file)
 
-    url_list = []
-    for project in input_data["projects"]:
-        if project["url"]:
-            url_list.append(project["url"])
-
     scraping_data = {}
     scraping_data["projects"] = []
+    url_list = []
+    for project in input_data["projects"]:
+        url = project["url"]
+        if url:
+            project_to_add = {}
+            project_to_add["url"] = url
+            project_to_add["text"] = text_scraper(url)
+            project_to_add["themes"] = project["themes"]
+            scraping_data["projects"].append(project_to_add)
 
-    for url in url_list:
-        project = {}
-        project["url"] = url
-        project["text"] = text_scraper(url)
-        scraping_data["projects"].append(project)
-
-    with open("scraping_data.json", "w") as output_file:
+    with open(sys.argv[2], "w") as output_file:
         json.dump(scraping_data, output_file)
     return
 

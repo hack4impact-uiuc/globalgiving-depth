@@ -1,0 +1,64 @@
+{
+  "projects": [
+    {
+      "country": "Cambodia",
+      "name": "Digital Divide Data",
+      "themes": [
+        {
+          "id": "ecdev",
+          "name": "Economic Development"
+        }
+      ],
+      "url": "http://www.digitaldividedata.com"
+    },
+    {
+      "country": "India",
+      "name": "Ghoghardiha Prakhand Swarajya Vikas Sangh-GPSVS",
+      "themes": [
+        {
+          "id": "ecdev",
+          "name": "Economic Development"
+        },
+        {
+          "id": "health",
+          "name": "Health"
+        }
+      ],
+      "url": "http://www.gpsvs.org"
+    },
+    {
+      "country": "India",
+      "name": "Ruchika Social Service Organisation",
+      "themes": [
+        {
+          "id": "children",
+          "name": "Children"
+        },
+        {
+          "id": "edu",
+          "name": "Education"
+        },
+        {
+          "id": "gender",
+          "name": "Women and Girls"
+        },
+        {
+          "id": "health",
+          "name": "Health"
+        }
+      ],
+      "url": "http://www.ruchika.org"
+    },
+      {
+        "country": "Bangladesh",
+        "name": "Bangladesh National Women Lawyers' Association",
+        "themes": [
+          {
+            "id": "rights",
+            "name": "Human Rights"
+          }
+        ],
+        "url": "http://www.bnwla.org"
+      }
+  ]
+}
