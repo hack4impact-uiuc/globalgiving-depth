@@ -2,7 +2,7 @@ import json
 import re
 import numpy as np
 
-from sklearn.externals import joblib
+import pickle
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.multiclass import OneVsRestClassifier
@@ -38,7 +38,7 @@ def set_up_training_data(dataset, outfile_name):
     Keyword arguments:
     dataset -- A dataset of proper format
     outfile_name -- The name of the file to output formatted data
-    Returns: The map from theme names to assigned theme indices
+    Returns: The training data
     """
 
     next_index = 0
@@ -70,7 +70,29 @@ def set_up_training_data(dataset, outfile_name):
     with open(outfile_name, "w") as output_file:
         json.dump(data, output_file)
 
-    return themes
+    return data
+
+
+def save_classifier(obj, filename):
+    """
+    Saves the classifier.
+
+    Keyword arguments:
+    filename -- The name of the file to save to (ex. SGDClassifier.obj)
+    """
+    filehandler = open(filename, "wb")
+    pickle.dump(obj, filehandler)
+
+
+def load_classifier(filename):
+    """
+    Loads the classifier.
+
+    Keyword arguments:
+    filename -- The name of the file to save to (ex. SGDClassifier.obj)
+    """
+    filehandler = open(filename, "rb")
+    return pickle.load(filehandler)
 
 
 class NGOSGDClassifier:
@@ -79,8 +101,6 @@ class NGOSGDClassifier:
 
     Methods:
     __init__(self)
-    save_classifier(self, filename)
-    load_classifier(self, filename)
     fit(self, training_data)
     predict(self, testing_data)
     get_f1_scores(self)
@@ -88,38 +108,20 @@ class NGOSGDClassifier:
     get_target_map(self)
     """
 
-    themes = {} # The map from theme names to assigned index
-    training_data = {} # JSON object of training data
+    themes = {}  # The map from theme names to assigned index
+    training_data = {}  # JSON object of training data
 
-    probabilities = None # 2D numpy array of probabilites of each theme for each document
-    predictions = None # 2D binary numpy array of predicted themes for each document
+    # 2D numpy array of probabilites of each theme for each document
+    probabilities = None
+    predictions = None  # 2D binary numpy array of predicted themes for each document
 
-    testing_data = None # The data to test
-    testing_targets = None # The actual themes of the testing data
+    testing_data = None  # The data to test
+    testing_targets = None  # The actual themes of the testing data
 
-    SGDPipeline = None
-    
+    SGDPipeline = None  # The pipeline for the vectorizer, transformer, and classifier
+
     def __init__(self):
         pass
-
-    def save_classifier(self, filename):
-        """
-        Saves the classifier.
-
-        Keyword arguments:
-        filename -- The name of the file to save to (ex. SGDClassifier.joblib)
-        """
-        joblib.dump(self.SGDPipeline, filename)
-
-    def load_classifier(self, filename):
-        """
-        Loads the classifier.
-
-        Keyword arguments:
-        filename -- The name of the file to save to (ex. SGDClassifier.joblib)
-        """
-        self.SGDPipeline = joblib.load(filename)
-        return self.SGDPipeline
 
     def fit(self, training_data):
         """
@@ -129,7 +131,7 @@ class NGOSGDClassifier:
         training_data -- Data to train the model off of in the proper format
         Returns: The pipeline
         """
-        self.training_data = set_up_training_data(training_data)
+        self.training_data = training_data
         self.themes = self.training_data["themes"]
 
         text_clf = Pipeline(
