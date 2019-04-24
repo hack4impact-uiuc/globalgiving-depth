@@ -1,58 +1,55 @@
 import requests
 import json
+import copy
 import nltk
 import gensim
 import enchant
+import numpy as np
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 import sys
 
 sys.path.append("..")
-from utils.dataset_db import dynamo_db
 from utils.dataset_db import db
 
 
 def main():
     with open("dictionaries/categories_dict.json") as categories_dict:
         # fetching website data
-        dictionary = json.load(categories_dict)
         websites = db.get_dataset("organizations_text")
+        dictionary = json.load(categories_dict)
         classifications = {}
 
-        # tokenizing scraped website data into words
-        for i in range((int)(len(websites) * 0.8), len(websites)):
-            # fetching and processing text
-            if websites[i].get("text") is None:
-                continue
+    # tokenizing scraped website data into words
+    for i in range((int)(len(websites) * 0.8), len(websites)):
+        # fetching and processing text
+        if websites[i].get("text") is None:
+            continue
 
-            text = preprocess_text(websites[i].get("text"))
+        text = preprocess_text(websites[i].get("text"))
 
-            # storing classifications
-            classifications[websites[i]["name"]] = classify_org(dictionary, text)
+        # storing classifications
+        classifications[websites[i]["name"]] = classify_org(dictionary, text)
 
-            # progress bar for satisfaction
-            print((i - len(websites) * 0.8) / (len(websites) * 0.2))
+        # progress bar for satisfaction
+        print((i - len(websites) * 0.8) / (len(websites) * 0.2))
 
-        # dumping data
-        with open("classifications/bow_classifications.json", "w") as classifications_json:
-            json.dump(
-                classifications,
-                classifications_json,
-                sort_keys=True,
-                indent=2,
-                ensure_ascii=False,
-            )
+    # dumping data
+    with open("classifications/bow_classifications.json", "w") as classifications_json:
+        json.dump(
+            classifications,
+            classifications_json,
+            sort_keys=True,
+            indent=2,
+            ensure_ascii=False,
+        )
 
     print("classification success")
 
     # testing classification accuracy
-    with open("classifications/correct_classifications.json") as classifications:
+    with open("classifications/correct_2.json") as classifications:
         with open("classifications/bow_classifications.json") as predictions:
             f1_score(json.load(predictions), json.load(classifications))
-        #    correct = test_classification_accuracy(
-        #        json.load(predictions), json.load(classifications)
-        #    )
-        #print("classification accuracy: " + str(correct))
 
     print("success")
 
@@ -63,77 +60,48 @@ def classify_org(dictionary: dict, text: str):
     """
     # initializing category scores
     categories = {
-        "Education": 0,
-        "Children": 1,
-        "Women and Girls": 2,
-        "Animals": 3,
-        "Climate Change": 4,
-        "Democracy and Governance": 5,
-        "Disaster Recovery": 6,
-        "Economic Development": 7,
-        "Environment": 8,
-        "Microfinance": 9,
-        "Health": 10,
-        "Humanitarian Assistance": 11,
-        "Human Rights": 12,
-        "Sport": 13,
-        "Technology": 14,
-        "Hunger": 15,
-        "Arts and Culture": 16,
+        "Animals": 11,
+        "Arts and Culture": 14,
+        "Children": 6,
+        "Climate Change": 5,
+        "Democracy and Governance": 15,
+        "Disaster Recovery": 12,
+        "Economic Development": 0,
+        "Education": 1,
+        "Environment": 7,
+        "Microfinance": 2,
+        "Women and Girls": 3,
+        "Health": 8,
+        "Humanitarian Assistance": 9,
+        "Hunger": 16,
         "LGBTQAI+": 17,
+        "Human Rights": 4,
+        "Sport": 13,
+        "Technology": 10,
     }
 
-    scores = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    scores = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
-    # calculating sum of relevant words in each category
     total = 0
     for word in text:
         for category, category_words in dictionary.items():
             if category_words.get(word) is not None:
-                scores[categories[category]] += category_words.get(word).get("idf")
-                total += category_words.get(word).get("idf")
-
-    # calculating percentage of relevant words in each category
-    #for i in range(len(scores)):
-    #    scores[i] /= total if total != 0 else 1
+                scores[categories[category]] += category_words.get(word)
+                total += category_words.get(word)
 
     # finding second max score result
-    max = scores[0]
-    max_2 = 0
-    for score in scores:
-        if score > max:
-            max = score
-        elif score > max_2:
-            max_2 = score
+    temp = copy.deepcopy(scores)
+    temp.sort()
+    threshold = temp[-2]
 
     for i in range(len(scores)):
-        scores[i] = 1 if scores[i] >= max_2 else 0
-        
+        scores[i] = 1 if scores[i] >= threshold else 0
+
     # storing results
     return scores
 
 
 def f1_score(predictions: dict, classifications: dict):
-    categories = {
-        "Education": 0,
-        "Children": 1,
-        "Women and Girls": 2,
-        "Animals": 3,
-        "Climate Change": 4,
-        "Democracy and Governance": 5,
-        "Disaster Recovery": 6,
-        "Economic Development": 7,
-        "Environment": 8,
-        "Microfinance": 9,
-        "Health": 10,
-        "Humanitarian Assistance": 11,
-        "Human Rights": 12,
-        "Sport": 13,
-        "Technology": 14,
-        "Hunger": 15,
-        "Arts and Culture": 16,
-        "LGBTQAI+": 17,
-    }
 
     total_accu = 0
     total_prec = 0
@@ -148,9 +116,7 @@ def f1_score(predictions: dict, classifications: dict):
 
         for org_name, pred_themes in predictions.items():
             # get correct themes
-            corr_themes = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-            for theme in classifications[org_name]["themes"]:
-                corr_themes[categories[theme["name"]]] = 1
+            corr_themes = classifications[org_name]
 
             if pred_themes[category] == 1 and corr_themes[category] == 1:
                 tp += 1
@@ -164,17 +130,12 @@ def f1_score(predictions: dict, classifications: dict):
         accuracy = (tp + tn) / len(predictions)
         precision = tp / (tp + fp) if (tp + fp) != 0 else 0
         recall = tp / (tp + fn) if (tp + fn) != 0 else 0
-        f1 = 2 * ((precision * recall) / (precision + recall) if (precision + recall) != 0 else 0)
+        f1 = 2 * (
+            (precision * recall) / (precision + recall)
+            if (precision + recall) != 0
+            else 0
+        )
 
-        '''print(category + ":")
-        print("Accuracy:", accuracy)
-        print("Precision:", precision)
-        print("Recall:", recall)
-        print("F1:", f1)
-        print("    T  F")
-        print("T  " + str(tp) + ", " + str(fp))
-        print("F  " + str(fn) + ", " + str(tn))
-        print() '''
         total_accu += accuracy
         total_prec += precision
         total_reca += recall
@@ -184,18 +145,6 @@ def f1_score(predictions: dict, classifications: dict):
     print("Average Precision:", total_prec / 18)
     print("Average Recall:", total_reca / 18)
     print("Average F1:", total_f1 / 18)
-
-
-def print_results(organization, results: dict):
-    """ 
-    Helper method to display classification scores of an organization for testing purposes
-    """
-
-    print(organization)
-    print("Category scores: ")
-    for category in results:
-        print(category + ": " + str(results[category]))
-    print("\n\n")
 
 
 def stem_word(text: str):

@@ -45,7 +45,8 @@ def generate_dict(output_file: str):
     }
 
     # opening scraped website data
-    websites = dynamo_db.get_dataset("organizations_text")
+    with open("dictionaries/test.json") as database:
+        websites = json.load(database)
 
     # opening scraped website data
     with open("classifications/correct_classifications.json") as correct:
@@ -78,6 +79,11 @@ def generate_dict(output_file: str):
         # calculating idf scores
         print("calculating idf scores...")
         calculate_idf_scores(category_dict)
+
+        # removing unnecessary parameters
+        for category in category_dict:
+            for word in category_dict[category]:
+                category_dict[category][word] = category_dict[category][word]["tf-idf"]
 
     # dumping data
     with open(output_file + ".json", "w") as categories_json:
@@ -125,16 +131,15 @@ def calculate_idf_scores(categories):
 
     # counting word freq in categories
     for category in categories:
-        for word in categories[category].keys():
+        for word in categories[category]:
             all_words[word] += 1
 
     for word in all_words:
         for category in categories:
-            for term in categories[category]:
-                if word == term:
-                    categories[category][term]["idf"] = math.log10(
-                        (18 / all_words[word]) + 1
-                    )
+            if categories[category].get(word):
+                categories[category][word]["tf-idf"] = math.log10(
+                    (18 / all_words[word]) + 1
+                )
 
 
 if __name__ == "__main__":
