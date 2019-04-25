@@ -1,9 +1,8 @@
 import json
-
 from sklearn.model_selection import train_test_split
 
 from SGDClassifier import (
-    NGOSGDClassifier,
+    NGO_SGDClassifier,
     set_up_training_data,
     save_classifier,
     load_classifier,

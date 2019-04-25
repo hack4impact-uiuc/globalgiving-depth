@@ -95,7 +95,7 @@ def load_classifier(filename):
     return pickle.load(filehandler)
 
 
-class NGOSGDClassifier:
+class NGO_SGDClassifier:
     """
     Can assign multiple labels to input data using tf-idf scoring and the OneVsRest and SGD Classifier.
 
