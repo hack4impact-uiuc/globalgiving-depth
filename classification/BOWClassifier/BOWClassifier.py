@@ -55,6 +55,38 @@ class BOWClassifier:
 
         return self.predictions
 
+        def predict_org(self, text: str):
+            """
+            Predicts an organizations themes based off text
+
+            :param str text: text from the organization
+            :return: list of predictions
+            """
+            # list to store scores
+            scores = [0] * 18
+
+            # calculating sum of relevant words in each category
+            total = 0
+            for word in text:
+                for category, category_words in self.dictionary.items():
+                    if category_words.get(word) is not None:
+                        scores[self.themes[category]] += category_words.get(word).get(
+                            "tf-idf"
+                        )
+                        total += category_words.get(word).get("tf-idf")
+
+            # finding second highest category score
+            temp = copy.deepcopy(scores)
+            temp.sort()
+            threshold = temp[-2]
+
+            # predicting all themes of second highest score and above
+            for i in range(len(scores)):
+                scores[i] = 1 if scores[i] >= threshold else 0
+
+            # returning results
+            return scores
+
     def save_predictions(self, output_file: str):
         """
         Stores predictions made by the bag of words model
@@ -80,37 +112,8 @@ class BOWClassifier:
         """
         self.predictions = predictions
 
-    def predict_org(self, text: str):
-        """
-        Predicts an organizations themes based off text
-
-        :param str text: text from the organization
-        :return: list of predictions
-        """
-        # list to store scores
-        scores = [0] * 18
-
-        # calculating sum of relevant words in each category
-        total = 0
-        for word in text:
-            for category, category_words in self.dictionary.items():
-                if category_words.get(word) is not None:
-                    scores[self.themes[category]] += category_words.get(word).get(
-                        "tf-idf"
-                    )
-                    total += category_words.get(word).get("tf-idf")
-
-        # finding second highest category score
-        temp = copy.deepcopy(scores)
-        temp.sort()
-        threshold = temp[-2]
-
-        # predicting all themes of second highest score and above
-        for i in range(len(scores)):
-            scores[i] = 1 if scores[i] >= threshold else 0
-
-        # returning results
-        return scores
+    def get_predictions(self):
+        return self.predictions
 
     def get_f1_score(self):
         """
