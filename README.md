@@ -8,7 +8,7 @@
 
 Using machine learning classifiers, we can feed in text from an NGO's website and predict with reasonable accuracy the categories which that NGO may fall into. The classifiers provided here consist of a [Stochastic Gradient Descent](https://github.com/hack4impact-uiuc/globalgiving-depth/wiki/Stochastic-Gradient-Descent-(SGD)-Classifier) classifier and a [Bag of Words](https://github.com/hack4impact-uiuc/globalgiving-depth/wiki/Bag-of-Words-(BOW)-Classifier) classifier.
 
-- **Clustering** (see `/clustering` folder for code, details, and examples)
+- **Clustering** (see [`/clustering`](/clustering) folder for code, details, and examples)
 
 GlobalGiving's existing categorization scheme is certainly sufficient for the purposes it serves, but a categorization scheme based on the logical differences between language used on NGO websites would be more useful in identifying/characterizing unknown NGOs. The clustering algorithms provided here consist of a [K-Means implementation using Document Embeddings](https://github.com/hack4impact-uiuc/globalgiving-depth/wiki/Document-Embeddings) and an implementation of [Latent Dirichlet Allocation](https://github.com/hack4impact-uiuc/globalgiving-depth/wiki/Latent-Dirichlet-Allocation-(LDA)).
 
