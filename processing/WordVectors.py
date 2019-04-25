@@ -34,8 +34,8 @@ class WordVectors:
 
     Methods:
     __init__(self, datafile: str, samples=500)
-    get_word_vectors(self) -> list
-    reduce_word_vectors(self, vectors: list) -> tuple
+    get_word_vectors(self)
+    reduce_word_vectors(self, vectors: list)
     visualize(self, vector_labels: list) -> tuple
     """
 
@@ -69,7 +69,6 @@ class WordVectors:
         """
         Creates naive document vectors by summing all word
         vectors for each document and normalizes them.
-        Returns a list of naive document vectors.
         """
         # This method was written using the project summaries text body, but
         # other data sources use "text" as the applicable key. Check this.
@@ -80,13 +79,11 @@ class WordVectors:
             self.word_embedding(remove_stopwords(get_words(doc[text_key]))).vector
             for doc in self.dataset[: self.samples - 1]
         ]
-        return self.word_vectors
 
-    def reduce_word_vectors(self, vectors: list, pca_components=2):
+    def reduce_word_vectors(self, pca_components=2):
         """
         Perform dimensionality reduction on feature matrix using PCA.
         Parameters:
-            vectors: list of word vectors
             PCA_components: an integer (default 2) which is the number of
                 principal components to use for PCA.
         Returns:
@@ -102,7 +99,6 @@ class WordVectors:
         pca = PCA(n_components=pca_components)
         pca.fit_transform(X)
         self.X = X
-        return X, explained_variance
 
     def visualize(self, vector_labels: list):
         """
