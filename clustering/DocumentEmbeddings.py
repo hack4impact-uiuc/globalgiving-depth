@@ -20,7 +20,7 @@ def get_words(text):
     clean_list = []
     for word in wordlist:
         # only get words (no digits)
-        if not word.isdigit() and re.match(r"^[a-z]+$", word):
+        if re.match(r"^[a-z]+$", word):
             clean_list.append(word)
     return " ".join(clean_list)
 
