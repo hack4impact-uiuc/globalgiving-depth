@@ -17,4 +17,4 @@ For more information on the NLTK Downloader, please refer to [NLTK Documentation
 
 ## Credits
 
-This project is (licensed)[LICENSE] under the terms of the MIT license.
+This project is [licensed](LICENSE) under the terms of the MIT license.
