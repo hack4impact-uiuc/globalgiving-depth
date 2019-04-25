@@ -4,6 +4,10 @@ import numpy as np
 
 
 class BOWClassifier:
+    """
+    A bag of words classifier to predict the themes of a non-profit organization given text.
+    """
+
     # internal necessities
     themes = {}
     training_data = {}
