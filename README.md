@@ -6,6 +6,13 @@
 
 ## Installation
 
+(something something)
+
+Unguided LDA:
+
+It may be necessary to use the NLTK Downloader to obtain “stopwords,” “WordNetLemmatizer,” and other resources from the Natural Language Tool Kit. 
+For more information on the NLTK Downloader, please refer to [NLTK Documentation](https://www.nltk.org/data.html).
+
 ## Usage
 
 ## Credits
