@@ -47,7 +47,7 @@ def main():
     print("classification success")
 
     # testing classification accuracy
-    with open("classifications/correct_2.json") as classifications:
+    with open("classifications/correct_classifications.json") as classifications:
         with open("classifications/bow_classifications.json") as predictions:
             f1_score(json.load(predictions), json.load(classifications))
 
@@ -92,7 +92,7 @@ def classify_org(dictionary: dict, text: str):
     # finding second max score result
     temp = copy.deepcopy(scores)
     temp.sort()
-    threshold = temp[-2]
+    threshold = temp[-3]
 
     for i in range(len(scores)):
         scores[i] = 1 if scores[i] >= threshold else 0
