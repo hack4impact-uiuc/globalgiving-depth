@@ -31,9 +31,6 @@ It may be necessary to use the NLTK Downloader to obtain “stopwords,” “Wor
 If errors occur due to the above issue, your terminal should provide information on the NLTK Downloader.
 
 ## Previous Attempts
-### EM
-
-We attempted to use the Expectation Maximization algorithm for Gaussian Mixture Models to create unsupervised clusters. However, when testing on the dataset of text scraped from non-profit organization websites, most organizations would be clustered into 1 of 3 clusters, while the remaining 10 or so clusters would be mostly empty. Additionally, we found that the clusters had little to no correlation to the given categorization of the organizations.
 
 ### GuidedLDA
 
