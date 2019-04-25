@@ -16,6 +16,10 @@ GlobalGiving's existing categorization scheme is certainly sufficient for the pu
 
 How we classify/cluster the data is just as important as the way we obtain/process the data. For this project, we used an [HTML Parser](processing/HTMLParser.py) that leverages the BeautifulSoup library to pull clean and filtered text from NGO websites.
 
+- **Past approaches**
+
+Refer to the [wiki](https://github.com/hack4impact-uiuc/globalgiving-depth/wiki) to read about some other past approaches which were tried and abandoned.
+
 ## Getting Started
 
 ### Installation
