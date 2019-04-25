@@ -12,9 +12,9 @@ from sklearn.preprocessing import StandardScaler
 
 def get_words(text):
     """
-    Input:
+    Parameters:
         text: a string of text which needs to be processed
-    Output:
+    Returns:
         string of all words extracted from the input string
     """
     text = text.lower()
