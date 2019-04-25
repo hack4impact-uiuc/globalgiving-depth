@@ -59,37 +59,37 @@ class BOWClassifier:
 
         return self.predictions
 
-        def predict_org(self, text: str):
-            """
-            Predicts an organizations themes based off text
+    def predict_org(self, text: str):
+        """
+        Predicts an organizations themes based off text
 
-            :param str text: text from the organization
-            :return: list of predictions
-            """
-            # list to store scores
-            scores = [0] * 18
+        :param str text: text from the organization
+        :return: list of predictions
+        """
+        # list to store scores
+        scores = [0] * 18
 
-            # calculating sum of relevant words in each category
-            total = 0
-            for word in text:
-                for category, category_words in self.dictionary.items():
-                    if category_words.get(word) is not None:
-                        scores[self.themes[category]] += category_words.get(word).get(
-                            "tf-idf"
-                        )
-                        total += category_words.get(word).get("tf-idf")
+        # calculating sum of relevant words in each category
+        total = 0
+        for word in text:
+            for category, category_words in self.dictionary.items():
+                if category_words.get(word) is not None:
+                    scores[self.themes[category]] += category_words.get(word).get(
+                        "tf-idf"
+                    )
+                    total += category_words.get(word).get("tf-idf")
 
-            # finding second highest category score
-            temp = copy.deepcopy(scores)
-            temp.sort()
-            threshold = temp[-5]
+        # finding second highest category score
+        temp = copy.deepcopy(scores)
+        temp.sort()
+        threshold = temp[-5]
 
-            # predicting all themes of second highest score and above
-            for i in range(len(scores)):
-                scores[i] = 1 if scores[i] >= threshold else 0
+        # predicting all themes of second highest score and above
+        for i in range(len(scores)):
+            scores[i] = 1 if scores[i] >= threshold else 0
 
-            # returning results
-            return scores
+        # returning results
+        return scores
 
     def save_predictions(self, output_file: str):
         """
