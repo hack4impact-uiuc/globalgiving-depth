@@ -19,18 +19,16 @@ Each subfolder (classification, clustering, processing) has Jupyter notebooks wi
 
 ## Team
 
- - Product Manager - Josh Burke (@JoshBurke)
- - Technical Lead - Aryn Harmon (@achcello)
+ - Product Manager - Josh Burke ([@JoshBurke](https://github.com/JoshBurke))
+ - Technical Lead - Aryn Harmon ([@achcello](https://github.com/achcello))
 
 **Software Devs**
 
- - Jacqueline Osborn (@jackieo5023)
- - Lam Tran (@Lam7150)
- - Eugenia Chen (@Polarpi)
- - Prashant Pokhriyal (@psp2)
+ - Jacqueline Osborn ([@jackieo5023](https://github.com/jackieo5023))
+ - Lam Tran ([@Lam7150](https://github.com/Lam7150))
+ - Eugenia Chen ([@Polarpi](https://github.com/Polarpi))
+ - Prashant Pokhriyal ([@psp2](https://github.com/psp2))
 
 ## License
 
 This project is [licensed](LICENSE) under the terms of the MIT license.
-
-
