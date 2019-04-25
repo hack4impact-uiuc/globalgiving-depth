@@ -1,9 +1,17 @@
 # GlobalGiving Depth &middot; [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![CircleCI Status](https://circleci.com/gh/hack4impact-uiuc/globalgiving-depth.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/hack4impact-uiuc/globalgiving-depth) ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
 
-**Problem Statement:** To ...
+**Problem Statement:** GlobalGiving’s network consists of many organizations based in the US along with some nonprofits in other countries. There are still hundreds of thousands more organiztions which GlobalGiving knows *of*, but may not have information on the types of work they do. It is possible, given an NGO's website, to discern and characterize the work of these NGOs using statistics, natural language processing, and machine learning in an automated way.
 
 
-**Repo Description:** This repo is...
+**Repo Description:** This repo consists of our various approaches to characterizing the work of various NGOs. These approaches fall into a few different categories:
+- **Classification** (see `/classification` folder for code, details, and examples)
+Using machine learning classifiers, we can feed in text from an NGO's website and predict with reasonable accuracy the categories which that NGO may fall into. The classifiers provided here consist of a [Stochastic Gradient Descent](https://github.com/hack4impact-uiuc/globalgiving-depth/wiki/Stochastic-Gradient-Descent-(SGD)-Classifier) classifier and a [Bag of Words](https://github.com/hack4impact-uiuc/globalgiving-depth/wiki/Bag-of-Words-(BOW)-Classifier) classifier.
+
+- **Clustering** (see `/clustering` folder for code, details, and examples)
+GlobalGiving's existing categorization scheme is certainly sufficient for the purposes it serves, but a categorization scheme based on the logical differences between language used on NGO websites would be more useful in identifying/characterizing unknown NGOs. The clustering algorithms provided here consist of a [K-Means implementation using Document Embeddings](https://github.com/hack4impact-uiuc/globalgiving-depth/wiki/Document-Embeddings) and an implementation of [Latent Dirichlet Allocation](https://github.com/hack4impact-uiuc/globalgiving-depth/wiki/Latent-Dirichlet-Allocation-(LDA)).
+
+- **Processing** (see `/processing` folder for code, details, and examples)
+How we classify/cluster the data is just as important as the way we obtain/process the data. For this project, we used an [HTML Parser](processing/HTMLParser.py) that leverages the BeautifulSoup library to pull clean and filtered text from NGO websites.
 
 ## Getting Started
 
