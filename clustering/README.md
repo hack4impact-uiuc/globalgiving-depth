@@ -6,7 +6,13 @@ Clustering NGOs provides us with understanding of ....
 
 ## K-Means
 
-using document embeddings, ....
+K-Means clustering is an unsupervised algorithm that allows us to take a dataset and make inferences as to the similarities between documents. 
+
+In our specific implementation, we used project summaries, given to us by GlobalGiving, as documents in our K-Means clustering algorithm. From those clusters, we are then able to visualize what projects are most similar to each other. Additionally, we used K-Means in conjunction with document vectors (from Doc2Vec) where the project summaries are the documents.
+
+The goals is to then label these clusters and use them as a basis to compare new projects or non-profit organizations that have yet to be classified.
+
+The DocumentEmbeddings class where we used K-Means clustering can be found in _______.
 
 ## LDA
 
@@ -26,7 +32,9 @@ If errors occur due to the above issue, your terminal should provide information
 
 ## Previous Attempts
 ### EM
-something something
+
+We attempted to use the Expectation Maximization algorithm for Gaussian Mixture Models to create unsupervised clusters. However, when testing on the dataset of text scraped from non-profit organization websites, most organizations would be clustered into 1 of 3 clusters, while the remaining 10 or so clusters would be mostly empty. Additionally, we found that the clusters had little to no correlation to the given categorization of the organizations.
+
 ### GuidedLDA
 
 We attempted to design a Semi-Supervised LDA algorithm based on an article published online, but were unable to get the code to run. Here is the [article](https://medium.freecodecamp.org/how-we-changed-unsupervised-lda-to-semi-supervised-guidedlda-e36a95f3a164) for reference.
