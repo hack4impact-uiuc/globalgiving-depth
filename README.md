@@ -2,19 +2,35 @@
 
 ## Description
 
-## Table of Contents
+## Getting Started
 
-## Installation
+### Installation
 
-(something something)
+Dependencies can be installed into a virtual environment from the requirements.txt file using pipenv:
 
-Unguided LDA:
+`pipenv install -r requirements.txt`
 
-It may be necessary to use the NLTK Downloader to obtain “stopwords,” “WordNetLemmatizer,” and other resources from the Natural Language Tool Kit. 
+For LDA: It is necessary to use the NLTK Downloader to obtain “stopwords,” “WordNetLemmatizer,” and other resources from the Natural Language Toolkit. 
 For more information on the NLTK Downloader, please refer to [NLTK Documentation](https://www.nltk.org/data.html).
 
 ## Usage
 
-## Credits
+Each subfolder (classification, clustering, processing) has Jupyter notebooks with examples of code usage. Refer to the [wiki](https://github.com/hack4impact-uiuc/globalgiving-depth/wiki) for detailed function documentation.
+
+## Team
+
+ - Product Manager - Josh Burke (@JoshBurke)
+ - Technical Lead - Aryn Harmon (@achcello)
+
+**Software Devs**
+
+ - Jacqueline Osborn (@jackieo5023)
+ - Lam Tran (@Lam7150)
+ - Eugenia Chen (@Polarpi)
+ - Prashant Pokhriyal (@psp2)
+
+## License
 
 This project is [licensed](LICENSE) under the terms of the MIT license.
+
+
