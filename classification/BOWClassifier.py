@@ -82,7 +82,7 @@ class BOWClassifier:
         # finding second highest category score
         temp = copy.deepcopy(scores)
         temp.sort()
-        threshold = temp[-5]
+        threshold = temp[-6]
 
         # predicting all themes of second highest score and above
         for i in range(len(scores)):
