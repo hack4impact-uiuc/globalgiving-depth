@@ -1,6 +1,9 @@
 # GlobalGiving Depth &middot; [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![CircleCI Status](https://circleci.com/gh/hack4impact-uiuc/globalgiving-depth.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/hack4impact-uiuc/globalgiving-depth) ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
 
-## Description
+**Problem Statement:** To ...
+
+
+**Repo Description:** This repo is...
 
 ## Getting Started
 
