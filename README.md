@@ -13,7 +13,7 @@ Dependencies can be installed into a virtual environment from the requirements.t
 For LDA: It is necessary to use the NLTK Downloader to obtain “stopwords,” “WordNetLemmatizer,” and other resources from the Natural Language Toolkit. 
 For more information on the NLTK Downloader, please refer to [NLTK Documentation](https://www.nltk.org/data.html).
 
-## Usage
+### Usage
 
 Each subfolder (classification, clustering, processing) has Jupyter notebooks with examples of code usage. Refer to the [wiki](https://github.com/hack4impact-uiuc/globalgiving-depth/wiki) for detailed function documentation.
 
