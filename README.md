@@ -4,7 +4,7 @@
 
 
 **Repo Description:** This repo consists of our various approaches to characterizing the work of various NGOs. These approaches fall into a few different categories:
-- **Classification** (see `/classification` folder for code, details, and examples)
+- **Classification** (see [`/classification`](/classification) folder for code, details, and examples)
 
 Using machine learning classifiers, we can feed in text from an NGO's website and predict with reasonable accuracy the categories which that NGO may fall into. The classifiers provided here consist of a [Stochastic Gradient Descent](https://github.com/hack4impact-uiuc/globalgiving-depth/wiki/Stochastic-Gradient-Descent-(SGD)-Classifier) classifier and a [Bag of Words](https://github.com/hack4impact-uiuc/globalgiving-depth/wiki/Bag-of-Words-(BOW)-Classifier) classifier.
 
@@ -12,7 +12,7 @@ Using machine learning classifiers, we can feed in text from an NGO's website an
 
 GlobalGiving's existing categorization scheme is certainly sufficient for the purposes it serves, but a categorization scheme based on the logical differences between language used on NGO websites would be more useful in identifying/characterizing unknown NGOs. The clustering algorithms provided here consist of a [K-Means implementation using Document Embeddings](https://github.com/hack4impact-uiuc/globalgiving-depth/wiki/Document-Embeddings) and an implementation of [Latent Dirichlet Allocation](https://github.com/hack4impact-uiuc/globalgiving-depth/wiki/Latent-Dirichlet-Allocation-(LDA)).
 
-- **Processing** (see `/processing` folder for code, details, and examples)
+- **Processing** (see [`/processing`](/processing) folder for code, details, and examples)
 
 How we classify/cluster the data is just as important as the way we obtain/process the data. For this project, we used an [HTML Parser](processing/HTMLParser.py) that leverages the BeautifulSoup library to pull clean and filtered text from NGO websites.
 
