@@ -40,7 +40,7 @@ Each subfolder (classification, clustering, processing) has Jupyter notebooks wi
  - Product Manager - Josh Burke ([@JoshBurke](https://github.com/JoshBurke))
  - Technical Lead - Aryn Harmon ([@achcello](https://github.com/achcello))
 
-### Software Devs
+**Software Devs**
 
  - Jacqueline Osborn ([@jackieo5023](https://github.com/jackieo5023))
  - Lam Tran ([@Lam7150](https://github.com/Lam7150))
