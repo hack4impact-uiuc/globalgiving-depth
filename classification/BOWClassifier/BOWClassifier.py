@@ -43,7 +43,7 @@ class BOWClassifier:
         Predicts a set of organizations
 
         :param dict testing_data: the testing dataset to be predicted
-        :return: list of predicted scores
+        :return: A list of lists of predicted scores
         """
         assert self.dictionary
         self.predictions = []
@@ -78,7 +78,7 @@ class BOWClassifier:
             # finding second highest category score
             temp = copy.deepcopy(scores)
             temp.sort()
-            threshold = temp[-2]
+            threshold = temp[-5]
 
             # predicting all themes of second highest score and above
             for i in range(len(scores)):
