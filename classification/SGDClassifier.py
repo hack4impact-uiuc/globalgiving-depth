@@ -136,7 +136,7 @@ class NGO_SGDClassifier:
 
         text_clf = Pipeline(
             [
-                ("vect", CountVectorizer(ngram_range=(1, 2), max_df=0.6)),
+                ("vect", CountVectorizer(ngram_range=(1, 2), max_df=0.7)),
                 ("tfidf", TfidfTransformer()),
                 (
                     "clf",
