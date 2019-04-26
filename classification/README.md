@@ -25,6 +25,7 @@ Bag of words works in two steps:
 1. Generate a dictionary of words with tf-idf scores for each category for the classifier to reference
 2. Use the bag of words algorithm to classify organizations by counting/scoring the words contained in the website's text. The highest scored categories are the predicted classifications given to the organization
 
+Example code can be seen here, with more in the jupyter notebook repo
 ```
 # importing libraries
 from BOWClassifier import BOWClassifier
