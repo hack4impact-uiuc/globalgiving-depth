@@ -25,6 +25,46 @@ Bag of words works in two steps:
 1. Generate a dictionary of words with tf-idf scores for each category for the classifier to reference
 2. Use the bag of words algorithm to classify organizations by counting/scoring the words contained in the website's text. The highest scored categories are the predicted classifications given to the organization
 
+```
+# importing libraries
+from BOWClassifier import BOWClassifier
+import json
+
+# opening json files
+with open("training.json") as training_data_json, \
+        open("dictionary.json") as dictionary_json, \
+        open("testing.json") as organizations_json:
+        
+    # loading json files
+    training_data = json.load(training_data_json)
+    dictionary = json.load(dictionary_json)
+    organizations = json.load(organizations_json)
+
+# initializing bag of words classifier
+bow = BOWClassifier(training_data, dictionary)
+
+# predicting a set of organization
+bow.predict_set(organizations)
+
+# saving predictions
+bow.save_predictions("predictions.json")
+
+# loading predictions
+with open("predictions.json") as predictions_json:
+    predictions = json.load(predictions_json)
+    bow.load_predictions(predictions)
+
+# Loading targets of correct classifications to test accuracy of given dataset
+bow.load_targets(json.load(open("trained.json")))
+
+# Calculating f1 score of predictions
+print(bow.get_f1_score())
+
+# Predicting an organization based off text
+text = "Climate change is not just an environmental issue, or a social justice issue, or an economic issue — it’s all of those things at once. The only way we will be strong enough to put pressure on governments and stand up to the fossil fuel industry is if we all work together."
+print(bow.predict_org(text))
+```
+
 ## What is TF-IDF?
 Tf-idf is a weighting scheme that assigns each term in a document a weight based on its term frequency (tf) and inverse document frequency (idf). Tf-idf is especially valuable in the bag of words algorithm to increase the accuracy of its predictions by scoring words in an organization's text with a weighted score accounting for its relevance to each category, rather than simply summing the number of words that appear in each category.
 
