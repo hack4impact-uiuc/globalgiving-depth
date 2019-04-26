@@ -29,21 +29,22 @@ class NGOUnguidedLDA:
     This is a class for developing and training an Unguided LDA Model.
 
     Methods:
-    __init__(self, input_file)
+    __init__(self, training_data: list)
     process_projects(self)
-    create_training_dict(self, max_proportion, num_keep)
-    create_lda_model(self, num_topics, num_workers, tf_idf)
+    create_training_dict(self, max_proportion: int, num_keep: int)
+    create_lda_model(self, num_topics: int, num_workers: int, tf_idf: bool)
     print_lda_topics(self)
-    test_lda_model(self, testing_data, top_topics=3, words_per_topic=5)
+    test_lda_model(self, testing_data: list, top_topics=3, words_per_topic=5)
     """
 
     training_data = []
+    testing_data = None
     processed_projects = []
     training_dict = {}
+    word_corpus = []
     lda_model = None
-    testing_data = None
 
-    def __init__(self, training_data):
+    def __init__(self, training_data: list):
         """
         The constructor for the UnguidedLDA Class.
 
@@ -91,7 +92,7 @@ class NGOUnguidedLDA:
         """
         Builds Corpus, then creates and trains LDA Model.
 
-        Default Corpus (Bag of Words) contains a list of word found in training_dict per project.
+        Default Corpus (Bag of Words) contains a list of words found in training_dict per project.
         Example Project List: [(token_id_1, count), (token_id_2, count)]
 
         For TF-IDF Corpus, set tf_idf to True.
@@ -117,6 +118,7 @@ class NGOUnguidedLDA:
             # Create tf-idf model object, then use to transform corpus
             tfidf = models.TfidfModel(corpus)
             corpus = tfidf[corpus]
+        self.word_corpus = corpus
 
         self.lda_model = gensim.models.LdaMulticore(
             corpus,
@@ -134,7 +136,7 @@ class NGOUnguidedLDA:
         for idx, topic in self.lda_model.print_topics(-1):
             print("Topic: {} \nWords: {}".format(idx, topic))
 
-    def test_lda_model(self, testing_data, top_topics=3, words_per_topic=5):
+    def test_lda_model(self, testing_data: list, top_topics=3, words_per_topic=5):
         """
         Tests LDA Model by printing out most likely topics for each testing project.
 
