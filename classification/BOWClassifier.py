@@ -6,18 +6,19 @@ import numpy as np
 class BOWClassifier:
     """
     A bag of words classifier to predict the themes of a non-profit organization given text.
+    Given: a dictionary of words for each theme to be predicted and text from an organization
+    Return: a list of predicted themes of the organization
     """
-
     # internal necessities
-    themes = {}
-    training_data = {}
-    dictionary = None
+    themes = {}            # a dict mapping themes to indices in a list
+    training_data = {}     # training data needed to initialize training dataset
+    dictionary = None      # dictionary of words for bag of words to utilize in scoring text
 
-    predictions = None
+    predictions = None     # predictions made by the classifier : stored every time predict_set is called
 
     # testing datasets
-    testing_data = None
-    testing_targets = None
+    testing_data = None    # testing dataset to test accuracy
+    testing_targets = None # testing targets
 
     def __init__(self, train_data: dict, dict_data: dict):
         """
@@ -199,6 +200,9 @@ class BOWClassifier:
     def load_targets(self, target_data: dict):
         """
         Load the testing targets (correct classifications) for testing dataset
+        Predictions made by the classifier are stored in a list of lists of the predicted scores.
+        The testing targets to be loaded should also be a list of lists of predicted scores, with each index
+        corresponding to the same organization in the predictions list.
 
         :param dict target_data: dictionary containing target data for testing dataset
         """
