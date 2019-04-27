@@ -1,0 +1,70 @@
+{
+  "projects": [
+    {
+      "url": "http://www.aghauganda.org/",
+      "themes": [
+        {
+          "id": "ecdev",
+          "name": "Economic Development",
+          "confidence": 45.610480314032436
+        },
+        {
+          "id": "ecdev",
+          "name": "Economic Development",
+          "confidence": 45.59906634741054
+        },
+        { "id": "health", "name": "Health", "confidence": 45.610480314032436 },
+        {
+          "id": "children",
+          "name": "Children",
+          "confidence": 45.610480314032436
+        },
+        { "id": "edu", "name": "Education", "confidence": 45.610480314032436 },
+        {
+          "id": "gender",
+          "name": "Women and Girls",
+          "confidence": 45.610480314032436
+        },
+        { "id": "health", "name": "Health", "confidence": 45.59906634741054 },
+        {
+          "id": "rights",
+          "name": "Human Rights",
+          "confidence": 45.610480314032436
+        }
+      ]
+    },
+    {
+      "url": "http://www.destinystartingpoint.com/",
+      "themes": [
+        {
+          "id": "ecdev",
+          "name": "Economic Development",
+          "confidence": 45.610480314032436
+        },
+        { "id": "health", "name": "Health", "confidence": 45.610480314032436 },
+        {
+          "id": "children",
+          "name": "Children",
+          "confidence": 45.610480314032436
+        },
+        { "id": "edu", "name": "Education", "confidence": 45.610480314032436 },
+        {
+          "id": "gender",
+          "name": "Women and Girls",
+          "confidence": 45.610480314032436
+        },
+        {
+          "id": "rights",
+          "name": "Human Rights",
+          "confidence": 45.610480314032436
+        },
+        {
+          "id": "ecdev",
+          "name": "Economic Development",
+          "confidence": 45.59906634741054
+        },
+        { "id": "health", "name": "Health", "confidence": 45.59906634741054 }
+      ]
+    }
+  ]
+}
