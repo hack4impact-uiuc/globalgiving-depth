@@ -6,12 +6,19 @@ import numpy as np
 class BOWClassifier:
     """
     A bag of words classifier to predict the themes of a non-profit organization given text.
-    Given: a dictionary of words for each theme to be predicted and text from an organization
-    Return: a list of predicted themes of the organization
+    
+    Methods:
+    __init__(self, train_data: dict, dict_data: dict)
+    predict_set(self, testing_data: dict)
+    predict_org(self, text: str)
+    save_predictions(self, output_file: str)
+    load_predictions(self, predictions: dict)
+    get_predictions(self)
+    get_f1_score(self)
+    load_targets(self, target_data: dict)
     """
     # internal necessities
     themes = {}            # a dict mapping themes to indices in a list
-    training_data = {}     # training data needed to initialize training dataset
     dictionary = None      # dictionary of words for bag of words to utilize in scoring text
 
     predictions = None     # predictions made by the classifier : stored every time predict_set is called
@@ -27,7 +34,6 @@ class BOWClassifier:
         :param dict train_data: training data 
         :param dict dict_data: dictionary of category words
         """
-        self.training_data = train_data
         self.themes = self.training_data["themes"]
         self.dictionary = dict_data
 
@@ -147,8 +153,8 @@ class BOWClassifier:
                         fn += 1
                     else:
                         tn += 1
-            precision = 0 if tp + fp == 0 else tp / (tp + fp)
-            recall = 0 if tp + fn == 0 else tp / (tp + fn)
+            precision = 0 if (tp + fp == 0) else tp / (tp + fp)
+            recall = 0 if (tp + fn == 0) else tp / (tp + fn)
             f1 = (
                 0
                 if precision + recall == 0
