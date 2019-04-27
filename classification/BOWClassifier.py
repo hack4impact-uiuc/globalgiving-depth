@@ -17,15 +17,18 @@ class BOWClassifier:
     get_f1_score(self)
     load_targets(self, target_data: dict)
     """
-    # internal necessities
-    themes = {}            # a dict mapping themes to indices in a list
-    dictionary = None      # dictionary of words for bag of words to utilize in scoring text
 
-    predictions = None     # predictions made by the classifier : stored every time predict_set is called
+    # internal necessities
+    themes = {}  # a dict mapping themes to indices in a list
+    dictionary = None  # dictionary of words for bag of words to utilize in scoring text
+
+    predictions = (
+        None
+    )  # predictions made by the classifier : stored every time predict_set is called
 
     # testing datasets
-    testing_data = None    # testing dataset to test accuracy
-    testing_targets = None # testing targets
+    testing_data = None  # testing dataset to test accuracy
+    testing_targets = None  # testing targets
 
     def __init__(self, train_data: dict, dict_data: dict):
         """
