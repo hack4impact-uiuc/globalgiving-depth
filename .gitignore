@@ -22,3 +22,8 @@ Pipfile*
 # Pipenv files
 Pipfile
 Pipfile.lock
+
+# json files
+src/bag-of-words/classifications/correct_classifications.json
+src/bag-of-words/classifications/bow_classifications.json
+src/bag-of-words/dictionaries/categories_dict.json
