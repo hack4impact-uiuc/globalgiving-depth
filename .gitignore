@@ -23,5 +23,8 @@ Pipfile*
 Pipfile
 Pipfile.lock
 
-# jupyter notebook things
+# jupyter notebook checkpoints
 **/.ipynb_checkpoints/
+
+# joblib stored models
+**/joblib/
