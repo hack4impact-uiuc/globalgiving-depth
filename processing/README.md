@@ -1,16 +1,8 @@
 # Processing
 
 ## Summary
-Here we find code for preprocessing our models. *TODO:* Add more
-
-## Document Embeddings
-
-This is for ...
+Here we find code for processing text to use in our models. The only file of note here is the HTML Parser.
 
 ## HTML Parser
 
-this we used to....
-
-## Other Processing
-
-nltk stuff?
+The HTML parser is a class used to pull text from NGO websites. Given a URL, or list of URLs, it pulls text from the website(s) associated with URLs using the BeautifulSoup library.

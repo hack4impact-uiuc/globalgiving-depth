@@ -1,0 +1,25 @@
+# made with reference: https://github.com/hack4impact-uiuc/globalgiving-tool/blob/master/.circleci/config.yml
+
+# this CI job only checks the linting of the code; tests will be added if
+# there is time. Ideal testing scheme: run the jupyter notebook examples given
+# in the repo and see if they fail.
+version: 2
+jobs:
+  lint: # linting job
+    docker:
+      # python project
+      - image: circleci/python:3.7
+    steps:
+      - checkout # get commit to test from repo
+      - run:
+          command: |
+            pip install -r requirements.txt --user
+            pip install black --user
+            /home/circleci/.local/bin/black . --check
+            # basically: go into src, install all requirements, check format with black
+
+workflows:
+  version: 2
+  build-test:
+    jobs:
+      - lint
