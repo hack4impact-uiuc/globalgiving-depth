@@ -31,13 +31,12 @@ def get_words(text):
     return " ".join(clean_list)
 
 
-def set_up_training_data(dataset, outfile_name):
+def set_up_training_data(dataset):
     """
     Prepares a dataset to be fit to the classifier.
 
     Keyword arguments:
     dataset -- A dataset of proper format
-    outfile_name -- The name of the file to output formatted data
     Returns: The training data
     """
 
@@ -67,8 +66,6 @@ def set_up_training_data(dataset, outfile_name):
     data["targets"] = targets
     data["urls"] = urls
     data["text"] = text
-    with open(outfile_name, "w") as output_file:
-        json.dump(data, output_file)
 
     return data
 
