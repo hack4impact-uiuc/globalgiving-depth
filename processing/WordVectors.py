@@ -1,7 +1,5 @@
-import json
 import random
 import re
-
 import matplotlib.pyplot as plt
 import numpy
 import spacy
@@ -30,7 +28,7 @@ def get_words(text):
 class WordVectors:
     """
     Represent documents as word vectors. The embeddings for each word correspond
-    with those found in the pretrained word embedding model from spacy. 
+    with those found in the pretrained word embedding model from spacy.
 
     Methods:
     __init__(self, datafile: str, samples=500)
@@ -40,8 +38,6 @@ class WordVectors:
     """
 
     dataset = []  # list of dictionaries with "summary" and "_id" fields
-    samples = 500  # just used for visualization; we don't want to dump all points
-    # onto the plot, as they will overlap and overwhelm
 
     word_vectors = []
     word_embedding = None  # word embedding model; pretrained from spacy.io
@@ -49,14 +45,12 @@ class WordVectors:
     X = None  # feature matrix
     explained_variance = None
 
-    def __init__(self, dataset: list, samples=500):
+    def __init__(self, dataset: list):
         """
         Construct WordVectors object and read in the dataset.
         dataset: a list of dictionaries which have at least the field "summary"
             or "text". An "_id" would also be helpful.
-        samples: integral number of datapoints to visualize
         """
-        self.samples = samples
         self.dataset = dataset
         # shuffle the dataset to better train vectors
         random.shuffle(self.dataset)
@@ -73,11 +67,11 @@ class WordVectors:
         # This method was written using the project summaries text body, but
         # other data sources use "text" as the applicable key. Check this.
         text_key = "summary"
-        if not self.dataset[key]:
-            key = "text"
+        if not self.dataset[text_key]:
+            text_key = "text"
         self.word_vectors = [
             self.word_embedding(remove_stopwords(get_words(doc[text_key]))).vector
-            for doc in self.dataset[: self.samples - 1]
+            for doc in self.dataset
         ]
 
     def reduce_word_vectors(self, pca_components=2):
@@ -91,27 +85,24 @@ class WordVectors:
             explained_variance: percentage increase in explained variance due
                 to each principal component
         """
-        X = numpy.vstack(vectors)
+        X = numpy.vstack(self.word_vectors)
         scaler = StandardScaler()
         scaler.fit_transform(X)  # remove mean and scale to unit variance
-        explained_variance = PCA().fit(X).explained_variance_ratio_
-        self.explained_variance = explained_variance
+        self.explained_variance = PCA().fit(X).explained_variance_ratio_
         pca = PCA(n_components=pca_components)
         pca.fit_transform(X)
         self.X = X
 
-    def visualize(self, vector_labels: list):
+    def visualize(self):
         """
         Plots the reduced matrix of document embeddings using MatPlotLib.
         Plotted documents are colored according to given labels.
         Also plots a graph of explained variance vs. dimensions
-        Parameters:
-            vector_labels: list of labels for each document
         Returns:
             (fig, ax): the figure object and axis object which describes the
                 figure. This is returned so it can be plotted or saved.
         """
-        labels = numpy.array(vector_labels)
+        labels = numpy.array([doc["theme"] for doc in self.dataset])
         fig, ax = plt.subplots(2)
         labelset = set(labels)
         for label in labelset:
@@ -122,7 +113,7 @@ class WordVectors:
                 marker=".",
                 linestyle="",
             )
-        ax[0].set_title("{} NGO Summaries".format(self.samples))
+        ax[0].set_title("{} NGO Summaries".format(self.X.shape[0]))
         ax[0].set_xlabel("Principal Component 1")
         box = ax[0].get_position()
         ax[0].set_position([box.x0, box.y0, box.width * 0.75, box.height])
