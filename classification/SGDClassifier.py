@@ -12,32 +12,27 @@ from sklearn.linear_model import SGDClassifier
 
 def get_words(text):
     """
-    Cleans raw text from websites.
-
-    Keyword arguments:
-    text -- A string of text to clean
-
-    Returns: A string of cleaned text
+    Parameters:
+        text: a string of text which needs to be processed
+    Returns:
+        string of all words extracted from the input string
     """
-
     text = text.lower()
     wordlist = text.split()
     clean_list = []
     for word in wordlist:
         # only get words (no digits)
-        if not word.isdigit() and not re.match(r"[^\w]", word):
+        if re.match(r"^[a-z]+$", word):
             clean_list.append(word)
-
     return " ".join(clean_list)
 
 
-def set_up_training_data(dataset, outfile_name):
+def set_up_training_data(dataset):
     """
     Prepares a dataset to be fit to the classifier.
 
     Keyword arguments:
     dataset -- A dataset of proper format
-    outfile_name -- The name of the file to output formatted data
     Returns: The training data
     """
 
@@ -67,8 +62,6 @@ def set_up_training_data(dataset, outfile_name):
     data["targets"] = targets
     data["urls"] = urls
     data["text"] = text
-    with open(outfile_name, "w") as output_file:
-        json.dump(data, output_file)
 
     return data
 

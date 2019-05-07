@@ -1,6 +1,62 @@
 import json
 import copy
+import re
 import numpy as np
+
+
+def get_words(text):
+    """
+    Parameters:
+        text: a string of text which needs to be processed
+    Returns:
+        string of all words extracted from the input string
+    """
+    text = text.lower()
+    wordlist = text.split()
+    clean_list = []
+    for word in wordlist:
+        # only get words (no digits)
+        if re.match(r"^[a-z]+$", word):
+            clean_list.append(word)
+    return " ".join(clean_list)
+
+
+def set_up_training_data(dataset):
+    """
+    Prepares a dataset to be fit to the classifier.
+    Keyword arguments:
+    dataset -- A dataset of proper format
+    Returns: The training data
+    """
+
+    next_index = 0
+    themes = {}  # themes to indices
+    targets = []  # indices of themes, parallel to text array
+    text = []
+    urls = []
+
+    i = 0
+    for project in dataset:
+        m_themes = project["themes"]
+        if len(project["text"]) != 0:
+            words = get_words(project["text"])
+            urls.append(project["url"])
+            text.append(words)
+            targets.append([])
+            for theme in m_themes:
+                if theme["name"] not in themes:
+                    themes[theme["name"]] = next_index
+                    next_index += 1
+                targets[i].append(themes[theme["name"]])
+        i += 1
+
+    data = {}
+    data["themes"] = themes
+    data["targets"] = targets
+    data["urls"] = urls
+    data["text"] = text
+
+    return data
 
 
 class BOWClassifier:
@@ -37,7 +93,7 @@ class BOWClassifier:
         :param dict train_data: training data 
         :param dict dict_data: dictionary of category words
         """
-        self.themes = self.training_data["themes"]
+        self.themes = train_data["themes"]
         self.dictionary = dict_data
 
         # ensuring dictionary is correctly structured
