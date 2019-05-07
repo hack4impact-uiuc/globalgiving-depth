@@ -2,7 +2,7 @@
 
 ## Summary
 
-Clustering NGOs provides us with understanding of ....
+Clustering NGOs provides us with understanding of the variety of topics naturally present in data. Clustering algorithms can help GlobalGiving find new topics to better describe NGOs.
 
 ## LDA
 
