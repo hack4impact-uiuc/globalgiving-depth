@@ -1,0 +1,11 @@
+nltk==3.3
+gensim==3.4.0
+numpy==1.14.3
+matplotlib==2.2.2
+requests==2.18.4
+scipy==1.1.0
+spacy==2.0.12
+beautifulsoup4==4.7.1
+langdetect==1.0.7
+scikit_learn==0.20.3
+joblib==0.13.2

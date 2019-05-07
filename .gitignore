@@ -23,7 +23,8 @@ Pipfile*
 Pipfile
 Pipfile.lock
 
-# json files
-src/bag-of-words/classifications/correct_classifications.json
-src/bag-of-words/classifications/bow_classifications.json
-src/bag-of-words/dictionaries/categories_dict.json
+# jupyter notebook checkpoints
+**/.ipynb_checkpoints/
+
+# joblib stored models
+**/joblib/
