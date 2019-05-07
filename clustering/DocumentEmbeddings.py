@@ -1,11 +1,12 @@
-import json
 import random
 import re
 from pprint import pprint
 import numpy
+import matplotlib.pyplot as plt
 import gensim
 from gensim.parsing.preprocessing import remove_stopwords, preprocess_string
 from gensim.models import Doc2Vec
+from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
 
 LabeledSentence = gensim.models.doc2vec.TaggedDocument
@@ -36,7 +37,7 @@ class DocumentEmbeddings:
     the analysis of clustering.
 
     Methods:
-    __init__(self, dataset)
+    __init__(self, documents)
     train(self, ...) (see the function for a description of each parameter)
     cluster(self, n_clusters=14)
     get_centroids(self)
@@ -51,22 +52,17 @@ class DocumentEmbeddings:
     labels = []  # cluster labels from kmeans
     themes = []  # themes assigned from records
 
-    def __init__(self, data_file):
+    def __init__(self, documents: list):
         """
         Construct DocumentEmeddings object and read in the dataset.
         data_file: string of path to data file
         """
-
-        with open(data_file, "r") as df:
-            json.dump(self.dataset, df)
-        # shuffle the dataset to better train vectors
-        random.shuffle(self.dataset)
-
-        documents = []
-        for uid, doc in enumerate(self.dataset):
+        documents_cleaned = []
+        for uid, doc in enumerate(documents):
             document = preprocess_string(remove_stopwords(get_words(doc["summary"])))
-            documents.append(LabeledSentence(document, [uid]))
+            documents_cleaned.append(LabeledSentence(document, [uid]))
         self.documents = documents
+        random.shuffle(self.documents)
 
         self.themes = [doc["theme"] for doc in self.documents]
 
@@ -173,30 +169,56 @@ class DocumentEmbeddings:
             (fig, ax): the figure object and axis object which describes the
                 figure. This is returned so it can be plotted or saved.
         """
-        labels = numpy.array(self.themes)
+        # get the explained variance before reducing
+        ev = PCA().fit(self.model.docvecs.vectors_docs).explained_variance_ratio_
+        datapoint = PCA(n_components=2).fit_transform(self.model.docvecs.vectors_docs)
+
         fig, ax = plt.subplots(2)
-        labelset = set(labels)
-        for label in labelset:
-            ax[0].plot(
-                # plot only the labels which match the current label being plotted
-                self.X[labels == label, 0],
-                self.X[labels == label, 1],
-                label=label,
-                marker=".",
-                linestyle="",
+
+        # this is a list of 20 somewhat distinct colors to draw from
+        label1 = [
+            "#e6194b",
+            "#3cb44b",
+            "#ffe119",
+            "#4363d8",
+            "#f58231",
+            "#911eb4",
+            "#46f0f0",
+            "#f032e6",
+            "#bcf60c",
+            "#fabebe",
+            "#008080",
+            "#e6beff",
+            "#9a6324",
+            "#fffac8",
+            "#800000",
+            "#aaffc3",
+            "#808000",
+            "#ffd8b1",
+            "#000075",
+            "#808080",
+            "#ffffff",
+            "#000000",
+        ]
+        color = [label1[i % 20] for i in self.labels]
+
+        # make a scatterplot of all summaries, and
+        ax[0].scatter(datapoint[:, 0], datapoint[:, 1], c=color)
+        ax[0].set_title(
+            "{} NGO Summaries in Clusters".format(
+                self.model.docvecs.vectors_docs.shape[0]
             )
-        ax[0].set_title("{} NGO Summaries".format(self.samples))
-        ax[0].set_xlabel("Principal Component 1")
+        )
+        ax[0].set_xlabel(
+            "Principal Component 1 ({:.2f}% of Variance)".format(ev[0] * 100)
+        )
         box = ax[0].get_position()
         ax[0].set_position([box.x0, box.y0, box.width * 0.75, box.height])
-        ax[0].legend(loc="center left", bbox_to_anchor=(1, 0.5))
-        ax[0].set_ylabel("Principal Component 2")
-        ax[1].plot(  # plot the cumulative sums of explained variance
-            [
-                numpy.sum(self.explained_variance[:n])
-                for n in range(len(self.explained_variance))
-            ]
+        # ax[0].legend(loc="center left", bbox_to_anchor=(1, 0.5))
+        ax[0].set_ylabel(
+            "Principal Component 2 ({:.2f}% of Variance)".format(ev[1] * 100)
         )
+        ax[1].plot([numpy.sum(ev[:n]) for n in range(len(ev))])
         ax[1].set_title("Explained Variance")
         ax[1].set_xlabel("Number of Principal Components")
         ax[1].set_ylabel("Total Variance Ratio")
