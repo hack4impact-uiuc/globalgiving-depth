@@ -24,7 +24,7 @@ Refer to the [wiki](https://github.com/hack4impact-uiuc/globalgiving-depth/wiki)
 
 ### Installation
 
-Dependencies can be installed into a virtual environment from the requirements.txt file using pipenv:
+This project was built in Python 3.7. Dependencies can be installed into a virtual environment from the requirements.txt file using pipenv:
 
 `pipenv install -r requirements.txt`
 
